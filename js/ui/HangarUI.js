@@ -42,17 +42,20 @@ class HangarUIClass {
       });
     }
 
-    // Sync top header Game Mode dropdown and Inspector Battle Type dropdown
+    // Sync top header Game Mode dropdown and update Launch Button label dynamically
     const modeSelectHeader = document.getElementById('game-mode-select');
     const typeSelectPanel = document.getElementById('setting-battle-type');
     if (modeSelectHeader) {
       modeSelectHeader.addEventListener('change', (e) => {
         if (typeSelectPanel) typeSelectPanel.value = e.target.value;
+        this.updateLaunchButtonText();
       });
+      this.updateLaunchButtonText();
     }
     if (typeSelectPanel) {
       typeSelectPanel.addEventListener('change', (e) => {
         if (modeSelectHeader) modeSelectHeader.value = e.target.value;
+        this.updateLaunchButtonText();
       });
     }
 
@@ -180,6 +183,25 @@ class HangarUIClass {
     const saName = document.getElementById('inspector-sa-name'); if (saName) saName.innerText = ship.saName;
     const saCd = document.getElementById('inspector-sa-cd'); if (saCd) saCd.innerText = `Cooldown: ${ship.saCd}s`;
     const saDesc = document.getElementById('inspector-sa-desc'); if (saDesc) saDesc.innerText = ship.saDesc;
+  }
+
+  updateLaunchButtonText() {
+    const launchBtn = document.getElementById('btn-deploy-ship');
+    const modeSelectHeader = document.getElementById('game-mode-select');
+    if (!launchBtn || !modeSelectHeader) return;
+
+    const labels = {
+      'skirmish': 'LAUNCH 5v5 FLEET SKIRMISH',
+      'outnumbered': 'LAUNCH 3v8 OUTNUMBERED CLASH!',
+      'ambush': 'LAUNCH PROTECT CARRIER AMBUSH',
+      'survival': 'LAUNCH WAVE SURVIVAL MODE',
+      'boss': 'LAUNCH BOSS RUSH VS ULTIMATE #30',
+      'testdrive': 'LAUNCH TARGET RANGE TEST DRIVE'
+    };
+
+    const val = modeSelectHeader.value || 'skirmish';
+    const labelText = labels[val] || labels['skirmish'];
+    launchBtn.innerHTML = `<span class="paw">🐾</span> ${labelText}`;
   }
 
   startPreviewAnimation() {
