@@ -45,12 +45,14 @@ class HangarUIClass {
     // Sync top header Game Mode dropdown and Inspector Battle Type dropdown
     const modeSelectHeader = document.getElementById('game-mode-select');
     const typeSelectPanel = document.getElementById('setting-battle-type');
-    if (modeSelectHeader && typeSelectPanel) {
+    if (modeSelectHeader) {
       modeSelectHeader.addEventListener('change', (e) => {
-        typeSelectPanel.value = e.target.value;
+        if (typeSelectPanel) typeSelectPanel.value = e.target.value;
       });
+    }
+    if (typeSelectPanel) {
       typeSelectPanel.addEventListener('change', (e) => {
-        modeSelectHeader.value = e.target.value;
+        if (modeSelectHeader) modeSelectHeader.value = e.target.value;
       });
     }
 
@@ -99,7 +101,10 @@ class HangarUIClass {
     if (!grid) return;
     grid.innerHTML = '';
 
-    const data = (typeof SHIPS_DATA !== 'undefined' && Array.isArray(SHIPS_DATA)) ? SHIPS_DATA : [];
+    console.log("SHIPS_DATA:", window.SHIPS_DATA);
+    console.log("Global SHIPS_DATA:", typeof SHIPS_DATA);
+
+    const data = (typeof SHIPS_DATA !== 'undefined' && Array.isArray(SHIPS_DATA)) ? SHIPS_DATA : (window.SHIPS_DATA || []);
     const query = (this.searchQuery || '').trim().toLowerCase();
 
     const filtered = data.filter(ship => {
