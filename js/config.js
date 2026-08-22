@@ -2,7 +2,7 @@
  * Catnip Warships — Global Configuration & Constants
  */
 window.CONFIG = {
-  VERSION: 'v2.8.0',
+  VERSION: 'v2.8.6',
   // World & Physics Settings
   MAP_WIDTH: 3600,
   MAP_HEIGHT: 3600,

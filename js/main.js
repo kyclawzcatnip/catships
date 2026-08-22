@@ -60,7 +60,7 @@ class GameEngine {
   resizeCanvas() {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
-    this.camera.resizeViewport(this.canvas.width, this.canvas.height);
+    this.camera.resize(this.canvas.width, this.canvas.height);
   }
 
   returnToHangar() {
