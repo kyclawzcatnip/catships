@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catnip Warships — 30-Ship Naval Action</title>
+  <meta name="description" content="Catnip Warships is an action-packed 30-ship naval combat game featuring custom abilities, cat captains, island battlefields, and fleet AI.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- HANGAR / SHIP SELECTION MENU -->
+    <div id="hangar-screen" class="screen active">
+      <header class="hangar-header">
+        <div class="logo-container">
+          <span class="logo-icon">🐾⚓</span>
+          <div>
+            <h1>CATNIP WARSHIPS</h1>
+            <p class="subtitle">Complete 100-Ship Naval Fleet Roster</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="btn-sound-toggle" class="btn btn-secondary">
+            <span class="icon">🔊</span> Sound: ON
+          </button>
+          <div class="mode-select-group">
+            <label for="difficulty-select">Difficulty:</label>
+            <select id="difficulty-select">
+              <option value="easy" selected>🟢 Easy (-35% Enemy DMG, +HP Buff)</option>
+              <option value="normal">🟡 Normal (Balanced Combat)</option>
+              <option value="hard">🔴 Hard (Tactical Challenge)</option>
+            </select>
+          </div>
+          <div class="mode-select-group">
+            <label for="game-mode-select">Game Mode:</label>
+            <select id="game-mode-select">
+              <option value="skirmish" selected>5v5 Fleet Skirmish</option>
+              <option value="outnumbered">⚠️ Outnumbered (3 vs 8 Clash!)</option>
+              <option value="ambush">⚓ Protect Carrier Ambush</option>
+              <option value="survival">🌊 Wave Survival Mode</option>
+              <option value="boss">Boss Rush: Ultimate Catnip</option>
+              <option value="testdrive">Test Drive / Target Range</option>
+            </select>
+          </div>
+        </div>
+      </header>
+
+      <main class="hangar-main">
+        <!-- LEFT: Ship Filter & Roster Grid -->
+        <section class="roster-section">
+          <div class="roster-controls">
+            <div class="filter-tabs">
+              <button class="tab-btn active" data-filter="all">All (100)</button>
+              <button class="tab-btn" data-filter="Attacker">🗡️ Attacker</button>
+              <button class="tab-btn" data-filter="Tank">🛡️ Tank</button>
+              <button class="tab-btn" data-filter="Rusher">⚡ Rusher</button>
+              <button class="tab-btn" data-filter="Long Ranged">🎯 Long Ranged</button>
+            </div>
+            <div class="search-box">
+              <input type="text" id="ship-search-input" placeholder="Search ship name or ability...">
+            </div>
+          </div>
+
+          <div id="ship-grid" class="ship-grid">
+            <!-- 30 Ship Cards dynamically injected here -->
+          </div>
+        </section>
+
+        <!-- RIGHT: Selected Ship Detailed Inspector -->
+        <aside id="ship-inspector" class="ship-inspector">
+          <div class="inspector-card">
+            <div class="ship-preview-container">
+              <canvas id="hangar-preview-canvas" width="340" height="200"></canvas>
+              <div id="inspector-badge" class="type-badge">Attacker</div>
+            </div>
+
+            <div class="inspector-details">
+              <h2 id="inspector-name">Catnip</h2>
+              <p id="inspector-desc" class="ship-flavor">The iconic frontline command vessel equipped with catnip healing nanobots.</p>
+
+              <!-- STAT BARS -->
+              <div class="stat-group">
+                <div class="stat-row">
+                  <span class="stat-label">HP (Health):</span>
+                  <div class="stat-bar-outer">
+                    <div id="bar-hp" class="stat-bar-inner hp" style="width: 20%;"></div>
+                  </div>
+                  <span id="val-hp" class="stat-val">200</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">DA (Damage):</span>
+                  <div class="stat-bar-outer">
+                    <div id="bar-da" class="stat-bar-inner da" style="width: 20.8%;"></div>
+                  </div>
+                  <span id="val-da" class="stat-val">25</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">SP (Speed):</span>
+                  <div class="stat-bar-outer">
+                    <div id="bar-sp" class="stat-bar-inner sp" style="width: 50%;"></div>
+                  </div>
+                  <span id="val-sp" class="stat-val">5/10</span>
+                </div>
+              </div>
+
+              <!-- SPECIAL ABILITY CARD -->
+              <div class="ability-card">
+                <div class="ability-header">
+                  <span class="ability-icon">✨</span>
+                  <div>
+                    <h3 id="inspector-sa-name">Repair Cats</h3>
+                    <span id="inspector-sa-cd" class="cooldown-tag">Cooldown: 20s</span>
+                  </div>
+                </div>
+                <p id="inspector-sa-desc">Slowly repairs the ship's HP for a short period.</p>
+              </div>
+
+              <!-- BATTLE CUSTOMIZER PANEL (5 CUSTOMIZABLE SETTINGS) -->
+              <div class="battle-customizer-card">
+                <div class="customizer-title">⚙️ CUSTOM BATTLE SETTINGS</div>
+                
+                <div class="setting-row">
+                  <label for="setting-battle-type">⚔️ Scenario:</label>
+                  <select id="setting-battle-type">
+                    <option value="skirmish" selected>5v5 Fleet Skirmish</option>
+                    <option value="outnumbered">⚠️ Outnumbered (3 vs 8 Clash!)</option>
+                    <option value="ambush">⚓ Protect Carrier Ambush</option>
+                    <option value="boss">👑 Boss Rush (Vs Ultimate #30)</option>
+                    <option value="survival">🌊 Wave Survival Mode</option>
+                    <option value="testdrive">🎯 Target Range (Test Drive)</option>
+                  </select>
+                </div>
+
+                <div class="setting-row">
+                  <label for="setting-ambush-side">🛡️ Ambush Role:</label>
+                  <select id="setting-ambush-side">
+                    <option value="DEFEND" selected>🛡️ Defender (Protect Carrier)</option>
+                    <option value="ATTACK">⚔️ Attacker (Sink Carrier!)</option>
+                  </select>
+                </div>
+
+                <div class="setting-row">
+                  <label for="setting-map-theme">🏝️ Map Theme:</label>
+                  <select id="setting-map-theme">
+                    <option value="tropical" selected>🏝️ Tropical Archipelago</option>
+                    <option value="arctic">🧊 Arctic Glaciers (Icebergs)</option>
+                    <option value="volcano">🌋 Volcano Atoll (Magma Reefs)</option>
+                  </select>
+                </div>
+
+                <div class="setting-row">
+                  <label for="setting-weather">🌦️ Weather:</label>
+                  <select id="setting-weather">
+                    <option value="clear" selected>☀️ Clear Daylight</option>
+                    <option value="storm">🌙 Midnight Storm (Lightning)</option>
+                    <option value="sunset">🌅 Sunset Twilight</option>
+                  </select>
+                </div>
+
+                <div class="setting-row">
+                  <label for="setting-fleet-size">🚢 Fleet Size:</label>
+                  <select id="setting-fleet-size">
+                    <option value="3v3">3v3 Skirmish</option>
+                    <option value="5v5" selected>5v5 Fleet</option>
+                    <option value="10v10">💥 10v10 Mega Armada War!</option>
+                  </select>
+                </div>
+
+                <div class="setting-row">
+                  <label for="setting-cooldown-speed">⏱️ Ability Speed:</label>
+                  <select id="setting-cooldown-speed">
+                    <option value="1.0" selected>⏱️ Normal (1.0x Cooldowns)</option>
+                    <option value="0.5">⚡ Rapid Arcade (0.5x Fast CD!)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="inspector-actions">
+                <button id="btn-deploy-ship" class="btn btn-primary btn-large">
+                  <span class="paw">🐾</span> LAUNCH INTO BATTLE
+                </button>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </main>
+    </div>
+
+    <!-- BATTLEFIELD SCREEN -->
+    <div id="battle-screen" class="screen">
+      <!-- CANVAS GAME ENGINE -->
+      <canvas id="game-canvas"></canvas>
+
+      <!-- HUD OVERLAY -->
+      <div id="hud-overlay" class="hud-overlay">
+        <!-- TOP LEFT: CAT CAPTAIN PORTRAIT & PLAYER STATUS -->
+        <div class="hud-box captain-status-box">
+          <div class="captain-avatar-wrap">
+            <canvas id="captain-canvas" width="70" height="70"></canvas>
+            <div id="captain-speech-bubble" class="speech-bubble">Deploying for victory! Meow!</div>
+          </div>
+          <div class="status-bars">
+            <div class="hud-ship-name"><span id="hud-player-ship-name">Catnip</span> <span id="hud-type-badge" class="badge-mini">Attacker</span></div>
+            <div class="hud-bar-container">
+              <span class="hud-bar-label">HP</span>
+              <div class="hud-bar-track">
+                <div id="hud-hp-fill" class="hud-bar-fill hp" style="width: 100%;"></div>
+              </div>
+              <span id="hud-hp-num" class="hud-bar-text">200 / 200</span>
+            </div>
+            <div class="hud-bar-container">
+              <span class="hud-bar-label">SPD</span>
+              <div class="hud-bar-track">
+                <div id="hud-spd-fill" class="hud-bar-fill spd" style="width: 50%;"></div>
+              </div>
+              <span id="hud-spd-num" class="hud-bar-text">18 Knots</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TOP CENTER: BATTLE SCORE & OBJECTIVE -->
+        <div class="hud-box battle-score-box">
+          <div class="score-team blue-team">
+            <span class="team-label">CATNIP FLEET</span>
+            <span id="blue-score" class="score-num">5</span>
+          </div>
+          <div class="battle-vs">VS</div>
+          <div class="score-team red-team">
+            <span id="red-score" class="score-num">5</span>
+            <span class="team-label">DARK FLEET</span>
+          </div>
+        </div>
+
+        <!-- TOP RIGHT: MINIMAP -->
+        <div class="hud-box minimap-box">
+          <canvas id="minimap-canvas" width="160" height="160"></canvas>
+          <div class="minimap-label">TACTICAL RADAR</div>
+        </div>
+
+        <!-- BOTTOM CENTER: SPECIAL ABILITY & WEAPON STATUS -->
+        <div class="hud-box action-bar">
+          <div class="weapon-slot">
+            <div class="slot-key">SPACE / L-CLICK</div>
+            <div class="slot-name">Main Cannon</div>
+            <div class="slot-status ready">READY</div>
+          </div>
+          <div class="weapon-slot">
+            <div class="slot-key">KEY F</div>
+            <div class="slot-name">AA Flak Guns</div>
+            <div class="slot-status ready">READY</div>
+          </div>
+
+          <div id="ability-hud-slot" class="ability-slot">
+            <div class="slot-key">[ E ] KEY</div>
+            <div class="slot-icon" id="hud-ability-icon">✨</div>
+            <div class="ability-info">
+              <div id="hud-ability-name" class="slot-name">Repair Cats</div>
+              <div id="hud-ability-cd-text" class="cd-text">READY</div>
+            </div>
+            <div class="cd-overlay-ring">
+              <svg viewBox="0 0 36 36" class="circular-chart">
+                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path id="hud-cd-circle" class="circle" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOTTOM LEFT: CONTROLS HELP PROMPT -->
+        <div class="hud-box controls-hint">
+          <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Steering & Throttle</span>
+          <span><kbd>1</kbd> Regroup | <kbd>2</kbd> Focus | <kbd>3</kbd> Charge</span>
+          <span><kbd>TAB</kbd> Lock Target / Auto-Aim</span>
+          <span><kbd>P</kbd> ✈️ Pilot Fighter Jet</span>
+          <span><kbd>J</kbd><kbd>L</kbd> or <kbd>MOUSE</kbd> Aim Cannon</span>
+          <span><kbd>SPACE</kbd> / <kbd>F</kbd> Fire</span>
+          <span><kbd>E</kbd> / <kbd>SHIFT</kbd> Ability</span>
+          <button id="btn-pause-game" class="btn-mini">ESC Pause</button>
+        </div>
+      </div>
+
+      <!-- PAUSE MODAL -->
+      <div id="pause-modal" class="modal-backdrop hidden">
+        <div class="modal-card">
+          <h2>GAME PAUSED</h2>
+          <p>Battle is currently on hold.</p>
+          <div class="modal-buttons">
+            <button id="btn-resume" class="btn btn-primary">Resume Battle</button>
+            <button id="btn-return-hangar" class="btn btn-secondary">Return to Hangar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- END GAME MODAL -->
+      <div id="endgame-modal" class="modal-backdrop hidden">
+        <div class="modal-card endgame-card">
+          <div id="endgame-banner" class="endgame-banner victory">VICTORY!</div>
+          <h2 id="endgame-title">The Dark Fleet was defeated!</h2>
+          
+          <div class="endgame-stats">
+            <div class="stat-pill"><span class="label">Kills:</span> <span id="stat-kills" class="val">3</span></div>
+            <div class="stat-pill"><span class="label">Damage Dealt:</span> <span id="stat-damage" class="val">1,250</span></div>
+            <div class="stat-pill"><span class="label">Abilities Used:</span> <span id="stat-abilities" class="val">4</span></div>
+          </div>
+
+          <div class="modal-buttons">
+            <button id="btn-play-again" class="btn btn-primary btn-large">Battle Again</button>
+            <button id="btn-hangar-exit" class="btn btn-secondary">Back to Hangar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Version Tag (Bottom-Left) -->
+  <div class="version-tag">⚡ v2.8.0 — Tactical Scenarios & AA Flak Edition</div>
+
+  <!-- SCRIPTS MODULE LOAD ORDER -->
+  <script src="js/config.js?v=2.8.0"></script>
+  <script src="js/shipsData.js?v=2.8.0"></script>
+  <script src="js/abilities.js?v=2.8.0"></script>
+  
+  <script src="js/engine/Vector2D.js?v=2.8.0"></script>
+  <script src="js/engine/AudioSystem.js?v=2.8.0"></script>
+  <script src="js/engine/InputHandler.js?v=2.8.0"></script>
+  <script src="js/engine/Camera.js?v=2.8.0"></script>
+  <script src="js/engine/Map.js?v=2.8.0"></script>
+  <script src="js/engine/Physics.js?v=2.8.0"></script>
+  <script src="js/engine/Renderer.js?v=2.8.0"></script>
+  
+  <script src="js/entities/Particle.js?v=2.8.0"></script>
+  <script src="js/entities/Projectile.js?v=2.8.0"></script>
+  <script src="js/entities/Aircraft.js?v=2.8.0"></script>
+  <script src="js/entities/Ship.js?v=2.8.0"></script>
+  
+  <script src="js/ai/FleetAI.js?v=2.8.0"></script>
+  
+  <script src="js/ui/HangarUI.js?v=2.8.0"></script>
+  <script src="js/ui/HUD.js?v=2.8.0"></script>
+  <script src="js/ui/Minimap.js?v=2.8.0"></script>
+  <script src="js/ui/EndGameUI.js?v=2.8.0"></script>
+  
+  <script src="js/main.js?v=2.8.0"></script>
+</body>
+</html>
