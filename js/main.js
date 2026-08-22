@@ -24,7 +24,7 @@ class GameEngine {
       reconActiveTimer: 0
     };
 
-    this.camera = new CameraEngine(this.canvas.width, this.canvas.height);
+    this.camera = new Camera(this.canvas.width, this.canvas.height);
     this.world.camera = this.camera;
 
     this.playerShip = null;
