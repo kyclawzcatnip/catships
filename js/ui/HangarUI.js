@@ -68,7 +68,7 @@ class HangarUIClass {
         const cdSelect = document.getElementById('setting-cooldown-speed');
         const sideSelect = document.getElementById('setting-ambush-side');
 
-        const chosenBattleType = (typeSelectPanel && typeSelectPanel.value) || (modeSelectHeader && modeSelectHeader.value) || 'skirmish';
+        const chosenBattleType = (modeSelectHeader && modeSelectHeader.value) || (typeSelectPanel && typeSelectPanel.value) || 'skirmish';
 
         const settings = {
           difficulty: diffSelect ? diffSelect.value : 'easy',
