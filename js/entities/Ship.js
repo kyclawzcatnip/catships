@@ -3,20 +3,20 @@
  */
 class Ship {
   constructor(data, team = 'blue', x = 0, y = 0) {
-    this.data = data;
+    this.data = data || { id: 1, name: 'Warship', type: 'Attacker', hp: 200, da: 25, sp: 5, length: 50, width: 24, icon: '⚓', color: '#00e5ff', turretCount: 1 };
     this.team = team;
     this.x = x;
     this.y = y;
     this.rotation = (team === 'blue') ? 0 : Math.PI;
     this.turretAngle = this.rotation;
 
-    this.length = data.length || 50;
-    this.width = data.width || 24;
+    this.length = this.data.length || 50;
+    this.width = this.data.width || 24;
 
-    this.maxHp = data.hp;
-    this.hp = data.hp;
-    this.damage = data.da;
-    this.speedRating = data.sp;
+    this.maxHp = this.data.hp || 200;
+    this.hp = this.maxHp;
+    this.damage = this.data.da || 25;
+    this.speedRating = this.data.sp || 5;
 
     this.vx = 0;
     this.vy = 0;

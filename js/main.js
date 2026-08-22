@@ -126,7 +126,7 @@ class GameEngine {
     this.world.playerShip = null;
 
     // Create Player Ship
-    const pData = SHIPS_DATA.find(s => s.id === shipId) || SHIPS_DATA[0];
+    const pData = SHIPS_DATA.find(s => Number(s.id) === Number(shipId)) || SHIPS_DATA[0];
     const playerTeam = (this.gameMode === 'ambush' && this.battleSettings.ambushSide === 'ATTACK') ? 'red' : 'blue';
     const playerSpawnX = (playerTeam === 'red') ? CONFIG.MAP_WIDTH - 600 : 600;
     
