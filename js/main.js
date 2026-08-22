@@ -600,9 +600,8 @@ class GameEngine {
     // 7. Update Camera Focus
     const activeTarget = (this.isPilotingPlane && this.playerPlane) ? this.playerPlane : this.playerShip;
     if (activeTarget && !activeTarget.isDestroyed) {
-      this.camera.follow(activeTarget, dt);
+      this.camera.follow(activeTarget.x, activeTarget.y);
     }
-    this.camera.update(dt);
 
     // 8. Update HUD Elements
     HUD.update(this.playerShip, this.world);

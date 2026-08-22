@@ -76,8 +76,14 @@ def run_tests():
     if 'camera.resizeViewport' in main_code:
         print("  ❌ FAIL: Found 'camera.resizeViewport' in js/main.js (Method should be 'camera.resize')")
         failed += 1
+    elif 'camera.follow(activeTarget, dt)' in main_code:
+        print("  ❌ FAIL: Found 'camera.follow(activeTarget, dt)' in js/main.js (Method requires numeric x, y)")
+        failed += 1
+    elif 'camera.update(dt)' in main_code:
+        print("  ❌ FAIL: Found 'camera.update(dt)' in js/main.js (Method does not exist on Camera)")
+        failed += 1
     else:
-        print("  ✅ Passed Camera method signature audit (camera.resize confirmed).")
+        print("  ✅ Passed Camera method signature audit (camera.resize & camera.follow numeric x, y confirmed).")
         passed += 1
 
     # 4. SCRIPT LOAD ORDER IN INDEX.HTML
