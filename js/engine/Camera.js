@@ -5,8 +5,8 @@ class Camera {
   constructor(viewportWidth, viewportHeight) {
     this.x = 0;
     this.y = 0;
-    this.viewportWidth = viewportWidth;
-    this.viewportHeight = viewportHeight;
+    this.viewportWidth = viewportWidth || (typeof window !== 'undefined' ? window.innerWidth : 1280);
+    this.viewportHeight = viewportHeight || (typeof window !== 'undefined' ? window.innerHeight : 720);
 
     this.shakeIntensity = 0;
     this.shakeOffsetX = 0;
