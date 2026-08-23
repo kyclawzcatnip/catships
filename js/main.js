@@ -620,13 +620,25 @@ class GameEngine {
   render() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+    // Reset Context Defaults to prevent state leakage from previous passes
+    this.ctx.globalAlpha = 1.0;
+    this.ctx.globalCompositeOperation = 'source-over';
+    this.ctx.shadowBlur = 0;
+    if (this.ctx.setLineDash) this.ctx.setLineDash([]);
+
     // 1. Draw Map & Ocean Environment
     if (this.world.map) {
       this.world.map.draw(this.ctx, this.camera);
     }
 
+    // Reset Context State after map before drawing ships
+    this.ctx.globalAlpha = 1.0;
+    this.ctx.globalCompositeOperation = 'source-over';
+    this.ctx.shadowBlur = 0;
+    if (this.ctx.setLineDash) this.ctx.setLineDash([]);
+
     // 2. Draw Ship Entities
-    const shipsCount = this.world.ships.length;
+    const shipsCount = this.world.ships ? this.world.ships.length : 0;
     for (let i = 0; i < shipsCount; i++) {
       const ship = this.world.ships[i];
       if (ship && !ship.isDestroyed) {
