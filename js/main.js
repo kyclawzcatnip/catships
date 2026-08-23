@@ -146,6 +146,12 @@ class GameEngine {
     this.world.ships.push(this.playerShip);
     this.world.playerShip = this.playerShip;
 
+    // Instantly snap camera focus directly to player ship position on launch!
+    const targetCamX = this.playerShip.x - this.camera.viewportWidth / 2;
+    const targetCamY = this.playerShip.y - this.camera.viewportHeight / 2;
+    this.camera.x = Math.max(0, Math.min(CONFIG.MAP_WIDTH - this.camera.viewportWidth, targetCamX));
+    this.camera.y = Math.max(0, Math.min(CONFIG.MAP_HEIGHT - this.camera.viewportHeight, targetCamY));
+
     // Setup Fleet Roster according to Battle Type & Fleet Size
     this.setupFleetForMode(this.battleSettings, diff);
   }
