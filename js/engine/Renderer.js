@@ -77,17 +77,6 @@ class RendererEngine {
     const screenX = ship.x - camera.getRenderOffsetX();
     const screenY = ship.y - camera.getRenderOffsetY();
 
-    const vw = (camera && camera.viewportWidth > 100) ? camera.viewportWidth : (typeof window !== 'undefined' ? window.innerWidth : 1920);
-    const vh = (camera && camera.viewportHeight > 100) ? camera.viewportHeight : (typeof window !== 'undefined' ? window.innerHeight : 1080);
-
-    // Safe Offscreen Culling Check (300px margin)
-    if (
-      screenX + 300 < 0 || screenX - 300 > vw ||
-      screenY + 300 < 0 || screenY - 300 > vh
-    ) {
-      return;
-    }
-
     ctx.save();
     ctx.translate(screenX, screenY);
 

@@ -110,9 +110,10 @@ class GameEngine {
 
     const diff = CONFIG.DIFFICULTY[this.difficultyKey] || CONFIG.DIFFICULTY.easy;
 
-    // Switch Screens
+    // Switch Screens & Resize Canvas Buffer
     document.getElementById('hangar-screen').classList.remove('active');
     document.getElementById('battle-screen').classList.add('active');
+    this.resizeCanvas();
 
     // Setup World & Map with selected Theme
     this.world.map = new MapEngine(this.battleSettings.mapTheme || 'tropical');
