@@ -26,43 +26,56 @@ class InputHandlerClass {
 
   init() {
     window.addEventListener('keydown', (e) => {
-      this.keys[e.code] = true;
+      if (e.code) this.keys[e.code] = true;
+      if (e.key) {
+        this.keys[e.key] = true;
+        this.keys[e.key.toLowerCase()] = true;
+        this.keys[e.key.toUpperCase()] = true;
+      }
 
-      if (e.code === 'KeyP') {
+      const kCode = e.code || '';
+      const kKey = (e.key || '').toUpperCase();
+
+      if (kCode === 'KeyP' || kKey === 'P') {
         this.pilotPlaneTriggered = true;
       }
-      if (e.code === 'KeyE' || e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
+      if (kCode === 'KeyE' || kKey === 'E' || e.shiftKey || kCode.startsWith('Shift')) {
         this.abilityTriggered = true;
       }
-      if (e.code === 'Space') {
+      if (kCode === 'Space' || kKey === ' ') {
         this.spaceTriggered = true;
       }
-      if (e.code === 'KeyF') {
+      if (kCode === 'KeyF' || kKey === 'F') {
         this.aaTriggered = true;
       }
-      if (e.code === 'KeyK') {
+      if (kCode === 'KeyK' || kKey === 'K') {
         this.skipWaveTriggered = true;
       }
-      if (e.code === 'Escape') {
+      if (kCode === 'Escape' || kKey === 'ESCAPE') {
         this.pauseTriggered = true;
       }
-      if (e.code === 'Tab' || e.code === 'KeyT') {
+      if (kCode === 'Tab' || kKey === 'TAB' || kCode === 'KeyT' || kKey === 'T') {
         e.preventDefault();
         this.lockTargetTriggered = true;
       }
-      if (e.code === 'Digit1') {
+      if (kCode === 'Digit1' || kKey === '1') {
         this.fleetCommandTriggered = 'FOLLOW';
       }
-      if (e.code === 'Digit2') {
+      if (kCode === 'Digit2' || kKey === '2') {
         this.fleetCommandTriggered = 'FOCUS';
       }
-      if (e.code === 'Digit3') {
+      if (kCode === 'Digit3' || kKey === '3') {
         this.fleetCommandTriggered = 'ATTACK';
       }
     });
 
     window.addEventListener('keyup', (e) => {
-      this.keys[e.code] = false;
+      if (e.code) this.keys[e.code] = false;
+      if (e.key) {
+        this.keys[e.key] = false;
+        this.keys[e.key.toLowerCase()] = false;
+        this.keys[e.key.toUpperCase()] = false;
+      }
     });
 
     window.addEventListener('mousemove', (e) => {
@@ -74,7 +87,6 @@ class InputHandlerClass {
     window.addEventListener('mousedown', (e) => {
       if (e.button === 0) {
         this.mouse.isDown = true;
-        this.mouse.hasMoved = true;
       }
     });
 
@@ -86,7 +98,7 @@ class InputHandlerClass {
 
     // Touch support
     window.addEventListener('touchstart', (e) => {
-      if (e.touches.length > 0) {
+      if (e.touches && e.touches[0]) {
         this.mouse.x = e.touches[0].clientX;
         this.mouse.y = e.touches[0].clientY;
         this.mouse.isDown = true;
@@ -105,19 +117,19 @@ class InputHandlerClass {
   }
 
   isForward() {
-    return this.keys['KeyW'] || this.keys['ArrowUp'];
+    return !!(this.keys['KeyW'] || this.keys['ArrowUp'] || this.keys['w'] || this.keys['W']);
   }
 
   isBackward() {
-    return this.keys['KeyS'] || this.keys['ArrowDown'];
+    return !!(this.keys['KeyS'] || this.keys['ArrowDown'] || this.keys['s'] || this.keys['S']);
   }
 
   isTurnLeft() {
-    return this.keys['KeyA'] || this.keys['ArrowLeft'];
+    return !!(this.keys['KeyA'] || this.keys['ArrowLeft'] || this.keys['a'] || this.keys['A']);
   }
 
   isTurnRight() {
-    return this.keys['KeyD'] || this.keys['ArrowRight'];
+    return !!(this.keys['KeyD'] || this.keys['ArrowRight'] || this.keys['d'] || this.keys['D']);
   }
 
   isAimLeft() {
