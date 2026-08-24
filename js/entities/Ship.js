@@ -211,6 +211,8 @@ class Ship {
         barrelOffsets = [-3.0, 3.0]; // 2 Parallel Barrels
       } else if (tCount === 3) {
         barrelOffsets = [-4.5, 0, 4.5]; // 3 Parallel Barrels
+      } else if (tCount >= 4) {
+        barrelOffsets = [-6.0, -2.0, 2.0, 6.0]; // 4 Quad Parallel Barrels!
       }
 
       const numBarrels = barrelOffsets.length;

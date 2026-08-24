@@ -219,9 +219,18 @@ class RendererEngine {
       ctx.fill();
       ctx.stroke();
 
-      // Cannon Barrels (Dual barrels for multi-turret ships!)
+      // Cannon Barrels (Single, Dual, Triple, or 4-Barrel Quad Turrets!)
       ctx.fillStyle = '#ffffff';
-      if (tCount > 1) {
+      if (tCount >= 4) {
+        ctx.fillRect(0, -5.5, halfL * 0.55, 2.0);
+        ctx.fillRect(0, -2.0, halfL * 0.55, 2.0);
+        ctx.fillRect(0, 1.5, halfL * 0.55, 2.0);
+        ctx.fillRect(0, 5.0, halfL * 0.55, 2.0);
+      } else if (tCount === 3) {
+        ctx.fillRect(0, -4.5, halfL * 0.52, 2.2);
+        ctx.fillRect(0, -0.5, halfL * 0.52, 2.2);
+        ctx.fillRect(0, 3.5, halfL * 0.52, 2.2);
+      } else if (tCount === 2) {
         ctx.fillRect(0, -3.5, halfL * 0.5, 2.5);
         ctx.fillRect(0, 1.0, halfL * 0.5, 2.5);
       } else {
