@@ -50,9 +50,14 @@ class GameEngine {
       this.launchBattle(shipId, settings);
     });
 
-    EndGameUI.init(() => {
-      this.returnToHangar();
-    });
+    EndGameUI.init(
+      () => {
+        this.launchBattle(this.selectedShipId, this.battleSettings);
+      },
+      () => {
+        this.returnToHangar();
+      }
+    );
 
     requestAnimationFrame((now) => this.loop(now));
   }
@@ -67,6 +72,12 @@ class GameEngine {
     this.state = 'HANGAR';
     this.isPilotingPlane = false;
     this.playerPlane = null;
+    this.isEndingMatch = false;
+
+    EndGameUI.hide();
+    const pauseModal = document.getElementById('pause-modal');
+    if (pauseModal) pauseModal.classList.remove('active');
+
     document.getElementById('battle-screen').classList.remove('active');
     document.getElementById('hangar-screen').classList.add('active');
 
