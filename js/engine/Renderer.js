@@ -174,6 +174,8 @@ class RendererEngine {
       localTurretPositions = [halfL * 0.4, -halfL * 0.45];
     } else if (tCount === 3) {
       localTurretPositions = [halfL * 0.5, -halfL * 0.05, -halfL * 0.55];
+    } else if (tCount >= 4) {
+      localTurretPositions = [halfL * 0.6, halfL * 0.15, -halfL * 0.25, -halfL * 0.65];
     }
 
     localTurretPositions.forEach(lx => {
