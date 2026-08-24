@@ -42,18 +42,28 @@ class Ship {
   update(dt, world, inputHandler) {
     if (this.isDestroyed) return;
 
-    // 0. Tactical Retreat Trigger (< 25% HP) & Emergency Auto-Repair (120 HP/M -> 2.0 HP/s) up to 110% Overcharge!
+    // 0. Tactical Retreat Trigger (< 25% HP) & Emergency Auto-Repair (120 HP/M base with 2.5x / 3.5x scaling for high HP ships) up to 110% Overcharge!
     const hpRatio = this.hp / this.maxHp;
+    
+    // HP Tier Repair Multiplier: Under 500 -> 1.0x, 500-1000 -> 2.5x, 1000+ -> 3.5x
+    let healMult = 1.0;
+    if (this.maxHp >= 1000) {
+      healMult = 3.5;
+    } else if (this.maxHp >= 500) {
+      healMult = 2.5;
+    }
+
     if (!this.isRetreating && hpRatio <= 0.25 && this.hp > 0) {
       this.isRetreating = true;
       if (window.Renderer) {
         const textCol = this.isPlayer ? '#39ff14' : (this.team === 'blue' ? '#00e5ff' : '#ff9e00');
-        Renderer.addFloatingText(this.x, this.y - 55, '🛡️ TACTICAL RETREAT! REPAIRING (120 HP/M)', textCol);
+        const ratePerMin = Math.round(120 * healMult);
+        Renderer.addFloatingText(this.x, this.y - 55, `🛡️ TACTICAL RETREAT! REPAIRING (${ratePerMin} HP/M)`, textCol);
       }
     }
 
     if (this.isRetreating && this.hp > 0) {
-      const healRate = 2.0; // 120 HP per minute = 2.0 HP/sec
+      const healRate = 2.0 * healMult; // 120 HP/M base (2.0 HP/s) scaled by ship HP tier
       const overchargeMax = Math.round(this.maxHp * 1.10);
       this.hp = Math.min(overchargeMax, this.hp + healRate * dt);
 
