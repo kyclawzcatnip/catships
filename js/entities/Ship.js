@@ -192,6 +192,8 @@ class Ship {
       localTurretPositions = [halfL * 0.4, -halfL * 0.45];
     } else if (tCount === 3) {
       localTurretPositions = [halfL * 0.5, -halfL * 0.05, -halfL * 0.55];
+    } else if (tCount >= 4) {
+      localTurretPositions = [halfL * 0.6, halfL * 0.15, -halfL * 0.25, -halfL * 0.65];
     }
 
     // Perpendicular unit vector to firing angle for parallel barrel offsets
@@ -306,6 +308,11 @@ class Ship {
     if (this.isDestroyed) return;
 
     let damageTaken = amount;
+
+    // Catnip Infinity (#100) Passive Cosmic Citadel Armor (60% Damage Reduction)
+    if (this.data && this.data.id === 100) {
+      damageTaken *= 0.40;
+    }
 
     // Apply Armor Buff Reduction
     if (this.buffs.armor) {
