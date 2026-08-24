@@ -502,7 +502,18 @@ class GameEngine {
         this.playerShip.fireAA(this.world);
       }
 
-      // Special Ability (Key E / SHIFT)
+      // 🤿 Submarine Dive / Surface Toggle (Key Shift / Key X)
+      if (InputHandler.consumeSubmarineDiveTrigger()) {
+        this.playerShip.isSubmerged = !this.playerShip.isSubmerged;
+        if (window.Renderer) {
+          const label = this.playerShip.isSubmerged ? '🤿 SUBMERGED UNDERWATER (BULLET PROOF)!' : '⚓ SURFACED TO WATERLINE!';
+          const color = this.playerShip.isSubmerged ? '#00e5ff' : '#ffd700';
+          Renderer.addFloatingText(this.playerShip.x, this.playerShip.y - 45, label, color);
+          Renderer.addParticleBurst(this.playerShip.x, this.playerShip.y, '#00e5ff', 25);
+        }
+      }
+
+      // Special Ability (Key E)
       if (InputHandler.consumeAbilityTrigger()) {
         this.playerShip.useAbility(this.world);
       }

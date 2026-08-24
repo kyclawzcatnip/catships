@@ -35,6 +35,7 @@ class Ship {
     this.isPlayer = false;
 
     this.isRetreating = false;
+    this.isSubmerged = false; // Submarine underwater dive state
     this.captainMood = 'normal'; // 'normal', 'happy', 'hit', 'ability'
     this.moodTimer = 0;
   }
@@ -306,6 +307,14 @@ class Ship {
 
   takeDamage(amount, attacker) {
     if (this.isDestroyed) return;
+
+    // Submarine Submerged Invulnerability: Surface bullets pass harmlessly overhead!
+    if (this.isSubmerged) {
+      if (window.Renderer && Math.random() < 0.05) {
+        Renderer.addFloatingText(this.x, this.y - 35, '🤿 BULLET PASSED OVERHEAD (SUBMERGED)!', '#00b4d8');
+      }
+      return;
+    }
 
     let damageTaken = amount;
 

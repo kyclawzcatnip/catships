@@ -45,8 +45,11 @@ class InputHandlerClass {
       if (kCode === 'Space' || kKey === ' ') {
         this.spaceTriggered = true;
       }
-      if (kCode === 'KeyF' || kKey === 'F') {
+      if (kCode === 'KeyF' || kKey === 'F' || kKey === 'f') {
         this.aaTriggered = true;
+      }
+      if (kCode === 'KeyX' || kCode === 'ShiftLeft' || kCode === 'ShiftRight' || kKey === 'X' || kKey === 'x') {
+        this.subDiveTriggered = true;
       }
       if (kCode === 'KeyK' || kKey === 'K') {
         this.skipWaveTriggered = true;
@@ -196,6 +199,14 @@ class InputHandlerClass {
   consumeSkipWaveTrigger() {
     if (this.skipWaveTriggered) {
       this.skipWaveTriggered = false;
+      return true;
+    }
+    return false;
+  }
+
+  consumeSubmarineDiveTrigger() {
+    if (this.subDiveTriggered) {
+      this.subDiveTriggered = false;
       return true;
     }
     return false;

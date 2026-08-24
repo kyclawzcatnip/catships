@@ -116,7 +116,9 @@ class RendererEngine {
     }
 
     // 4. Stealth Shadow Blur Effect
-    if (ship.buffs && ship.buffs.stealth) {
+    if (ship.isSubmerged) {
+      ctx.globalAlpha = 0.35;
+    } else if (ship.buffs && ship.buffs.stealth) {
       ctx.globalAlpha = 0.4;
     }
 
