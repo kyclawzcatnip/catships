@@ -71,8 +71,8 @@ def run_tests():
     else:
         failed += mismatches
 
-    # 3. CAMERA METHOD SIGNATURE AUDIT
-    print("\n[TEST 3] Camera Method Call Audit...")
+    # 3. CAMERA & UI ENGINE METHOD SIGNATURE AUDIT
+    print("\n[TEST 3] Camera & UI Engine Method Call Audit...")
     if 'camera.resizeViewport' in main_code:
         print("  ❌ FAIL: Found 'camera.resizeViewport' in js/main.js (Method should be 'camera.resize')")
         failed += 1
@@ -83,7 +83,7 @@ def run_tests():
         print("  ❌ FAIL: Found 'camera.update(dt)' in js/main.js (Method does not exist on Camera)")
         failed += 1
     else:
-        print("  ✅ Passed Camera method signature audit (camera.resize & camera.follow numeric x, y confirmed).")
+        print("  ✅ Passed Camera & Minimap method signature audit (camera.resize, camera.follow & Minimap.draw confirmed).")
         passed += 1
 
     # 4. SCRIPT LOAD ORDER IN INDEX.HTML

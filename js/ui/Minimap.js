@@ -15,6 +15,13 @@ class MinimapClass {
     }
   }
 
+  draw(world, camera) {
+    if (!this.canvas) {
+      this.init();
+    }
+    this.update(world, camera);
+  }
+
   update(world, camera) {
     if (!this.canvas || !this.ctx || !world) return;
     const ctx = this.ctx;
