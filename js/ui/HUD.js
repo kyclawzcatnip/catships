@@ -17,13 +17,22 @@ class HUDClass {
   update(playerShip, world) {
     if (!playerShip || !playerShip.data) return;
 
-    // 1. Update Player HP Bar
+    // 1. Update Player HP Bar & Overcharge Shield Boost
     const hpFill = document.getElementById('hud-hp-fill');
     const hpNum = document.getElementById('hud-hp-num');
     if (hpFill && hpNum) {
       const hpPct = Math.max(0, (playerShip.hp / playerShip.maxHp) * 100);
-      hpFill.style.width = `${hpPct}%`;
-      hpNum.innerText = `${Math.ceil(playerShip.hp)} / ${playerShip.maxHp}`;
+      hpFill.style.width = `${Math.min(110, hpPct)}%`;
+      if (playerShip.hp > playerShip.maxHp) {
+        hpFill.style.background = 'linear-gradient(90deg, #39ff14, #ffd700)';
+        hpNum.innerText = `🛡️ OVERCHARGE ${Math.ceil(playerShip.hp)} / ${playerShip.maxHp} (${Math.round(hpPct)}%)`;
+      } else if (playerShip.isRetreating) {
+        hpFill.style.background = 'linear-gradient(90deg, #ff9e00, #39ff14)';
+        hpNum.innerText = `💚 REPAIRING ${Math.ceil(playerShip.hp)} / ${playerShip.maxHp} (${Math.round(hpPct)}%)`;
+      } else {
+        hpFill.style.background = '';
+        hpNum.innerText = `${Math.ceil(playerShip.hp)} / ${playerShip.maxHp}`;
+      }
     }
 
     // 2. Update Speedometer

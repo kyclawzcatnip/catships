@@ -45,8 +45,11 @@ class FleetAI {
       // 5. Movement Behavior
       desiredAngle = angleToTarget;
 
-      // Overridden by Fleet Command 'FOLLOW' for allies
-      if (isAlly && command === 'FOLLOW' && player && !player.isDestroyed) {
+      // Tactical Retreat Movement: Turn away from threat to repair!
+      if (aiShip.isRetreating) {
+        desiredAngle = angleToTarget + Math.PI;
+        aiShip.targetSpeed = (aiShip.data.sp || 5) * CONFIG.BASE_SHIP_SPEED;
+      } else if (isAlly && command === 'FOLLOW' && player && !player.isDestroyed) {
         const distToPlayer = aiShip.distanceTo(player);
         if (distToPlayer > 220) {
           desiredAngle = Math.atan2(player.y - aiShip.y, player.x - aiShip.x);

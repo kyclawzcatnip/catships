@@ -34,12 +34,43 @@ class Ship {
     this.isDestroyed = false;
     this.isPlayer = false;
 
+    this.isRetreating = false;
     this.captainMood = 'normal'; // 'normal', 'happy', 'hit', 'ability'
     this.moodTimer = 0;
   }
 
   update(dt, world, inputHandler) {
     if (this.isDestroyed) return;
+
+    // 0. Tactical Retreat Trigger (< 25% HP) & Emergency Auto-Repair (120 HP/M -> 2.0 HP/s) up to 110% Overcharge!
+    const hpRatio = this.hp / this.maxHp;
+    if (!this.isRetreating && hpRatio <= 0.25 && this.hp > 0) {
+      this.isRetreating = true;
+      if (window.Renderer) {
+        const textCol = this.isPlayer ? '#39ff14' : (this.team === 'blue' ? '#00e5ff' : '#ff9e00');
+        Renderer.addFloatingText(this.x, this.y - 55, '🛡️ TACTICAL RETREAT! REPAIRING (120 HP/M)', textCol);
+      }
+    }
+
+    if (this.isRetreating && this.hp > 0) {
+      const healRate = 2.0; // 120 HP per minute = 2.0 HP/sec
+      const overchargeMax = Math.round(this.maxHp * 1.10);
+      this.hp = Math.min(overchargeMax, this.hp + healRate * dt);
+
+      // Nanobot repair visual sparks
+      if (Math.random() < 0.2 && window.Renderer) {
+        Renderer.addParticleBurst(this.x + (Math.random() - 0.5) * 30, this.y + (Math.random() - 0.5) * 20, '#39ff14', 2);
+      }
+
+      // Exit Retreat Mode upon reaching 110% HP Overcharge Boost!
+      if (this.hp >= overchargeMax) {
+        this.isRetreating = false;
+        if (window.Renderer) {
+          Renderer.addFloatingText(this.x, this.y - 55, '⚡ REPAIR COMPLETE! +10% OVERCHARGE BOOST!', '#ffd700');
+          Renderer.addParticleBurst(this.x, this.y, '#ffd700', 18);
+        }
+      }
+    }
 
     // 1. Cooldown Timers
     if (this.primaryReloadTimer > 0) this.primaryReloadTimer -= dt;
