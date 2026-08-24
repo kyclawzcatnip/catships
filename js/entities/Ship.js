@@ -45,9 +45,11 @@ class Ship {
     // 0. Tactical Retreat Trigger (< 25% HP) & Emergency Auto-Repair (120 HP/M base with 2.5x / 3.5x scaling for high HP ships) up to 110% Overcharge!
     const hpRatio = this.hp / this.maxHp;
     
-    // HP Tier Repair Multiplier: Under 500 -> 1.0x, 500-1000 -> 2.5x, 1000+ -> 3.5x
+    // HP Tier Repair Multiplier: Under 500 -> 1.0x, 500-1000 -> 2.5x, 1000-2000 -> 3.5x, 2000+ -> 5.0x
     let healMult = 1.0;
-    if (this.maxHp >= 1000) {
+    if (this.maxHp >= 2000) {
+      healMult = 5.0;
+    } else if (this.maxHp >= 1000) {
       healMult = 3.5;
     } else if (this.maxHp >= 500) {
       healMult = 2.5;
