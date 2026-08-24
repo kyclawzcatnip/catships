@@ -51,32 +51,59 @@ class Aircraft {
 
     if (this.isPlayerControlled && inputHandler) {
       // --- PLAYER DIRECT PILOTING MODE ---
-      // Mouse Aiming & WASD Flight Controls
-      let moveForward = true;
-      let targetAngle = this.rotation;
+      // Smooth WASD & Keyboard Flight Vector Controls (Zero spinning circles!)
+      this.lifeTimer = 9999; // Infinite flight timer when player is piloting!
 
-      if (inputHandler.mouse && inputHandler.mouse.hasMoved) {
-        targetAngle = Math.atan2(inputHandler.mouse.worldY - this.y, inputHandler.mouse.worldX - this.x);
-      } else if (inputHandler.isAimLeft()) {
-        targetAngle = this.rotation - 3.5 * dt;
-      } else if (inputHandler.isAimRight()) {
-        targetAngle = this.rotation + 3.5 * dt;
+      let targetAngle = this.rotation;
+      let isInputtingDirection = false;
+
+      if (inputHandler.isTurnLeft() && inputHandler.isForward()) {
+        targetAngle = -Math.PI * 0.75; // Up-Left
+        isInputtingDirection = true;
+      } else if (inputHandler.isTurnRight() && inputHandler.isForward()) {
+        targetAngle = -Math.PI * 0.25; // Up-Right
+        isInputtingDirection = true;
+      } else if (inputHandler.isTurnLeft() && inputHandler.isBackward()) {
+        targetAngle = Math.PI * 0.75; // Down-Left
+        isInputtingDirection = true;
+      } else if (inputHandler.isTurnRight() && inputHandler.isBackward()) {
+        targetAngle = Math.PI * 0.25; // Down-Right
+        isInputtingDirection = true;
+      } else if (inputHandler.isForward()) {
+        targetAngle = -Math.PI * 0.5; // Up
+        isInputtingDirection = true;
+      } else if (inputHandler.isBackward()) {
+        targetAngle = Math.PI * 0.5; // Down
+        isInputtingDirection = true;
+      } else if (inputHandler.isTurnLeft()) {
+        targetAngle = Math.PI; // Left
+        isInputtingDirection = true;
+      } else if (inputHandler.isTurnRight()) {
+        targetAngle = 0; // Right
+        isInputtingDirection = true;
       }
 
-      // Smooth Jet Turn
-      const angleDiff = Math.atan2(Math.sin(targetAngle - this.rotation), Math.cos(targetAngle - this.rotation));
-      this.rotation += Math.sign(angleDiff) * Math.min(Math.abs(angleDiff), 4.5 * dt);
+      // Smooth Jet Turn Interpolation (No rapid spinning near mouse)
+      if (isInputtingDirection) {
+        const angleDiff = Math.atan2(Math.sin(targetAngle - this.rotation), Math.cos(targetAngle - this.rotation));
+        this.rotation += Math.sign(angleDiff) * Math.min(Math.abs(angleDiff), 6.5 * dt);
+      }
 
-      // Jet Forward Velocity
-      this.speed = 480; // Player jet turbo speed
+      // Jet Forward Velocity (Smooth 420 px/sec flight speed)
+      this.speed = 420;
       this.x += Math.cos(this.rotation) * this.speed * dt;
       this.y += Math.sin(this.rotation) * this.speed * dt;
+
+      // Keep Fighter Jet inside Map Boundaries
+      this.x = Math.max(100, Math.min(CONFIG.MAP_WIDTH - 100, this.x));
+      this.y = Math.max(100, Math.min(CONFIG.MAP_HEIGHT - 100, this.y));
 
       // Player Firing Gatling Cannon
       this.fireCooldown -= dt;
       const spacePressed = inputHandler.consumeSpaceTrigger() || (inputHandler.keys && inputHandler.keys['Space']);
       if ((inputHandler.mouse.isDown || spacePressed) && this.fireCooldown <= 0) {
-        this.fireCooldown = 0.12; // High-frequency Gatling gun
+        this.fireCooldown = 0.10; // Rapid Gatling cannon Fire
+        if (window.AudioSystem) AudioSystem.playPew();
         world.addProjectile(new Projectile({
           x: this.x + Math.cos(this.rotation) * 20,
           y: this.y + Math.sin(this.rotation) * 20,

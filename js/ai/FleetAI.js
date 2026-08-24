@@ -34,8 +34,9 @@ class FleetAI {
       // 3. Check Line of Sight (Island Obstacle Blocking)
       hasClearSight = this.hasLineOfSight(aiShip, target, world.map);
 
-      // 4. Turret Aiming towards target with lead prediction
-      const leadFactor = Math.min(1.5, dist / 700);
+      // 4. 5x COMMANDER AI TURRET AIMING (Pinpoint lead prediction & instant reaction)
+      const isCommander = (aiShip.isPlayer || aiShip.isPlayerAutopilot);
+      const leadFactor = Math.min(isCommander ? 3.0 : 1.5, dist / (isCommander ? 400 : 700));
       const targetVx = target.vx || 0;
       const targetVy = target.vy || 0;
       const leadX = target.x + targetVx * leadFactor;

@@ -439,8 +439,9 @@ class GameEngine {
       InputHandler.updateWorldMouse(this.camera);
       this.playerPlane.update(dt, this.world, InputHandler);
 
-      // 🤖 AUTOPILOT ASSIST: Command warship auto-navigates & fires primary salvos while captain is in fighter jet!
+      // 🤖 5x COMMANDER AUTOPILOT ASSIST: Command warship auto-navigates & aims with 5x skill while captain is in fighter jet!
       if (this.playerShip && !this.playerShip.isDestroyed) {
+        this.playerShip.isPlayerAutopilot = true;
         FleetAI.update(this.playerShip, dt, this.world);
         this.playerShip.update(dt, this.world, null);
       }
