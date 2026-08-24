@@ -115,6 +115,14 @@ class GameEngine {
     document.getElementById('battle-screen').classList.add('active');
     this.resizeCanvas();
 
+    // Strip focus from any active HTML input/select box so WASD keys reach the game engine
+    if (document.activeElement && typeof document.activeElement.blur === 'function') {
+      document.activeElement.blur();
+    }
+    if (typeof window.focus === 'function') {
+      window.focus();
+    }
+
     // Setup World & Map with selected Theme
     this.world.map = new MapEngine(this.battleSettings.mapTheme || 'tropical');
     this.world.ships = [];

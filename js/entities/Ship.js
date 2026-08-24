@@ -67,7 +67,8 @@ class Ship {
 
     // 3. Player Movement Control
     if (this.isPlayer && inputHandler) {
-      const maxSpeed = this.speedRating * CONFIG.BASE_SHIP_SPEED;
+      const sp = this.speedRating || 5;
+      const maxSpeed = sp * CONFIG.BASE_SHIP_SPEED;
 
       if (inputHandler.isForward()) {
         this.targetSpeed = maxSpeed;
@@ -77,7 +78,7 @@ class Ship {
         this.targetSpeed = 0;
       }
 
-      const turnRate = CONFIG.BASE_TURN_SPEED * dt * (this.speedRating / 5);
+      const turnRate = CONFIG.BASE_TURN_SPEED * dt * (sp / 5);
       if (inputHandler.isTurnLeft()) {
         this.rotation -= turnRate;
       }
@@ -87,7 +88,7 @@ class Ship {
     }
 
     // 4. Physics Velocity Interpolation
-    const accel = 350 * dt;
+    const accel = 600 * dt;
     if (this.currentSpeed < this.targetSpeed) {
       this.currentSpeed = Math.min(this.targetSpeed, this.currentSpeed + accel);
     } else if (this.currentSpeed > this.targetSpeed) {
