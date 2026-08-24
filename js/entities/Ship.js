@@ -65,6 +65,9 @@ class Ship {
       }
     }
 
+    // Initialize angular velocity if undefined
+    if (typeof this.angularVelocity !== 'number') this.angularVelocity = 0;
+
     // 3. Player Movement Control
     if (this.isPlayer && inputHandler) {
       const sp = this.speedRating || 5;
@@ -78,22 +81,22 @@ class Ship {
         this.targetSpeed = 0;
       }
 
-      const turnRate = CONFIG.BASE_TURN_SPEED * dt * (sp / 5);
+      const maxTurnSpeed = CONFIG.BASE_TURN_SPEED * 1.4 * (sp / 5);
+      let targetAngularVel = 0;
       if (inputHandler.isTurnLeft()) {
-        this.rotation -= turnRate;
+        targetAngularVel = -maxTurnSpeed;
+      } else if (inputHandler.isTurnRight()) {
+        targetAngularVel = maxTurnSpeed;
       }
-      if (inputHandler.isTurnRight()) {
-        this.rotation += turnRate;
-      }
+
+      // Smooth turn momentum interpolation
+      this.angularVelocity += (targetAngularVel - this.angularVelocity) * Math.min(1.0, 12 * dt);
+      this.rotation += this.angularVelocity * dt;
     }
 
-    // 4. Physics Velocity Interpolation
-    const accel = 600 * dt;
-    if (this.currentSpeed < this.targetSpeed) {
-      this.currentSpeed = Math.min(this.targetSpeed, this.currentSpeed + accel);
-    } else if (this.currentSpeed > this.targetSpeed) {
-      this.currentSpeed = Math.max(this.targetSpeed, this.currentSpeed - accel);
-    }
+    // 4. Physics Velocity Interpolation (Hydrodynamic Drag & Speed Smoothing)
+    const smoothFactor = Math.min(1.0, 6.0 * dt);
+    this.currentSpeed += (this.targetSpeed - this.currentSpeed) * smoothFactor;
 
     let speedMult = 1.0;
     if (this.buffs.speed) speedMult *= this.buffs.speed.multiplier || 1.4;
