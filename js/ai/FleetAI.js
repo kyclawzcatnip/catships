@@ -10,8 +10,8 @@ class FleetAI {
     const player = world.playerShip;
     const command = world.fleetCommand || 'ATTACK';
 
-    // 1. Determine Vision Range (800px standard, 1200px during Recon reveal)
-    const visionRange = (world.reconActiveTimer > 0) ? 1400 : 800;
+    // 1. Determine Vision Range (4000px full map coverage)
+    const visionRange = 4000;
 
     // 2. Target Acquisition within Vision Range & Line-of-Sight
     let target = null;
@@ -19,99 +19,101 @@ class FleetAI {
       target = world.lockedTarget;
     } else {
       target = this.findVisibleEnemy(aiShip, world, visionRange);
-    }
+    }    let desiredAngle = 0;
+    let dist = Infinity;
+    let hasClearSight = false;
 
-    // If no target is currently visible within sight range, hold position / patrol
     if (!target) {
-      aiShip.targetSpeed = aiShip.data.sp * CONFIG.BASE_SHIP_SPEED * 0.3;
-      return;
-    }
-
-    const dist = aiShip.distanceTo(target);
-    const angleToTarget = Math.atan2(target.y - aiShip.y, target.x - aiShip.x);
-
-    // 3. Check Line of Sight (Island Obstacle Blocking)
-    const hasClearSight = this.hasLineOfSight(aiShip, target, world.map);
-
-    // 4. Turret Aiming towards target with lead prediction
-    const leadFactor = Math.min(1.5, dist / 700);
-    const targetVx = target.vx || 0;
-    const targetVy = target.vy || 0;
-    const leadX = target.x + targetVx * leadFactor;
-    const leadY = target.y + targetVy * leadFactor;
-    aiShip.turretAngle = Math.atan2(leadY - aiShip.y, leadX - aiShip.x);
-
-    // 5. Movement Behavior
-    let desiredAngle = angleToTarget;
-
-    // Overridden by Fleet Command 'FOLLOW' for allies
-    if (isAlly && command === 'FOLLOW' && player && !player.isDestroyed) {
-      const distToPlayer = aiShip.distanceTo(player);
-      if (distToPlayer > 220) {
-        desiredAngle = Math.atan2(player.y - aiShip.y, player.x - aiShip.x);
-        aiShip.targetSpeed = aiShip.data.sp * CONFIG.BASE_SHIP_SPEED;
-      } else {
-        desiredAngle = angleToTarget;
-        aiShip.targetSpeed = aiShip.data.sp * CONFIG.BASE_SHIP_SPEED * 0.5;
-      }
+      // Fallback navigation: Navigate toward center of battlefield!
+      desiredAngle = Math.atan2(CONFIG.MAP_HEIGHT / 2 - aiShip.y, CONFIG.MAP_WIDTH / 2 - aiShip.x);
+      aiShip.targetSpeed = (aiShip.data.sp || 5) * CONFIG.BASE_SHIP_SPEED * 0.5;
     } else {
-      // Standard Role Movement
-      const role = aiShip.data.type;
-      switch(role) {
-        case 'Tank':
-          if (dist > 250) {
-            desiredAngle = angleToTarget;
-            aiShip.targetSpeed = aiShip.data.sp * CONFIG.BASE_SHIP_SPEED;
-          } else {
-            desiredAngle = angleToTarget + Math.PI / 2;
-            aiShip.targetSpeed = aiShip.data.sp * CONFIG.BASE_SHIP_SPEED * 0.7;
-          }
-          if (aiShip.hp < aiShip.maxHp * 0.45 && aiShip.saCooldownTimer <= 0) {
-            aiShip.useAbility(world);
-          }
-          break;
+      dist = aiShip.distanceTo(target);
+      const angleToTarget = Math.atan2(target.y - aiShip.y, target.x - aiShip.x);
 
-        case 'Rusher':
-          if (dist > 180) {
-            desiredAngle = angleToTarget + Math.sin(Date.now() * 0.002) * 0.4;
-            aiShip.targetSpeed = aiShip.data.sp * CONFIG.BASE_SHIP_SPEED;
-          } else {
-            desiredAngle = angleToTarget + Math.PI;
-            aiShip.targetSpeed = aiShip.data.sp * CONFIG.BASE_SHIP_SPEED;
-          }
-          if (dist < 400 && aiShip.saCooldownTimer <= 0) {
-            aiShip.useAbility(world);
-          }
-          break;
+      // 3. Check Line of Sight (Island Obstacle Blocking)
+      hasClearSight = this.hasLineOfSight(aiShip, target, world.map);
 
-        case 'Long Ranged':
-          if (dist < 550) {
-            desiredAngle = angleToTarget + Math.PI;
-            aiShip.targetSpeed = aiShip.data.sp * CONFIG.BASE_SHIP_SPEED;
-          } else if (dist > 900) {
-            desiredAngle = angleToTarget;
-            aiShip.targetSpeed = aiShip.data.sp * CONFIG.BASE_SHIP_SPEED;
-          } else {
-            aiShip.targetSpeed = 0;
-          }
-          if (dist < 1100 && aiShip.saCooldownTimer <= 0 && hasClearSight) {
-            aiShip.useAbility(world);
-          }
-          break;
+      // 4. Turret Aiming towards target with lead prediction
+      const leadFactor = Math.min(1.5, dist / 700);
+      const targetVx = target.vx || 0;
+      const targetVy = target.vy || 0;
+      const leadX = target.x + targetVx * leadFactor;
+      const leadY = target.y + targetVy * leadFactor;
+      aiShip.turretAngle = Math.atan2(leadY - aiShip.y, leadX - aiShip.x);
 
-        case 'Attacker':
-        default:
-          if (dist > 350) {
-            desiredAngle = angleToTarget;
-            aiShip.targetSpeed = aiShip.data.sp * CONFIG.BASE_SHIP_SPEED;
-          } else {
-            desiredAngle = angleToTarget + Math.PI / 3;
-            aiShip.targetSpeed = aiShip.data.sp * CONFIG.BASE_SHIP_SPEED * 0.8;
-          }
-          if (dist < 600 && aiShip.saCooldownTimer <= 0 && hasClearSight) {
-            aiShip.useAbility(world);
-          }
-          break;
+      // 5. Movement Behavior
+      desiredAngle = angleToTarget;
+
+      // Overridden by Fleet Command 'FOLLOW' for allies
+      if (isAlly && command === 'FOLLOW' && player && !player.isDestroyed) {
+        const distToPlayer = aiShip.distanceTo(player);
+        if (distToPlayer > 220) {
+          desiredAngle = Math.atan2(player.y - aiShip.y, player.x - aiShip.x);
+          aiShip.targetSpeed = aiShip.data.sp * CONFIG.BASE_SHIP_SPEED;
+        } else {
+          desiredAngle = angleToTarget;
+          aiShip.targetSpeed = aiShip.data.sp * CONFIG.BASE_SHIP_SPEED * 0.5;
+        }
+      } else {
+        // Standard Role Movement
+        const role = aiShip.data.type;
+        switch(role) {
+          case 'Tank':
+            if (dist > 250) {
+              desiredAngle = angleToTarget;
+              aiShip.targetSpeed = aiShip.data.sp * CONFIG.BASE_SHIP_SPEED;
+            } else {
+              desiredAngle = angleToTarget + Math.PI / 2;
+              aiShip.targetSpeed = aiShip.data.sp * CONFIG.BASE_SHIP_SPEED * 0.7;
+            }
+            if (aiShip.hp < aiShip.maxHp * 0.45 && aiShip.saCooldownTimer <= 0) {
+              aiShip.useAbility(world);
+            }
+            break;
+
+          case 'Rusher':
+            if (dist > 180) {
+              desiredAngle = angleToTarget + Math.sin(Date.now() * 0.002) * 0.4;
+              aiShip.targetSpeed = aiShip.data.sp * CONFIG.BASE_SHIP_SPEED;
+            } else {
+              desiredAngle = angleToTarget + Math.PI;
+              aiShip.targetSpeed = aiShip.data.sp * CONFIG.BASE_SHIP_SPEED;
+            }
+            if (aiShip.hp < aiShip.maxHp * 0.5 && aiShip.saCooldownTimer <= 0) {
+              aiShip.useAbility(world);
+            }
+            break;
+
+          case 'Long Ranged':
+            if (dist > 500) {
+              desiredAngle = angleToTarget;
+              aiShip.targetSpeed = aiShip.data.sp * CONFIG.BASE_SHIP_SPEED;
+            } else if (dist < 320) {
+              desiredAngle = angleToTarget + Math.PI;
+              aiShip.targetSpeed = aiShip.data.sp * CONFIG.BASE_SHIP_SPEED * 0.8;
+            } else {
+              desiredAngle = angleToTarget + Math.PI / 2;
+              aiShip.targetSpeed = aiShip.data.sp * CONFIG.BASE_SHIP_SPEED * 0.4;
+            }
+            if (dist < 600 && aiShip.saCooldownTimer <= 0) {
+              aiShip.useAbility(world);
+            }
+            break;
+
+          default: // Attacker
+            if (dist > 300) {
+              desiredAngle = angleToTarget;
+              aiShip.targetSpeed = aiShip.data.sp * CONFIG.BASE_SHIP_SPEED;
+            } else {
+              desiredAngle = angleToTarget + Math.sin(Date.now() * 0.001) * 0.6;
+              aiShip.targetSpeed = aiShip.data.sp * CONFIG.BASE_SHIP_SPEED * 0.8;
+            }
+            if (dist < 450 && aiShip.saCooldownTimer <= 0) {
+              aiShip.useAbility(world);
+            }
+            break;
+        }
       }
     }
 

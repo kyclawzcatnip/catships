@@ -387,8 +387,12 @@ class GameEngine {
     this.lastTime = now;
 
     if (this.state === 'BATTLE') {
-      this.update(dt);
-      this.render();
+      try {
+        this.update(dt);
+        this.render();
+      } catch (err) {
+        console.error("Catnip Warships loop error:", err);
+      }
     }
 
     requestAnimationFrame((t) => this.loop(t));
