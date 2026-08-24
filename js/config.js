@@ -3,7 +3,7 @@
  */
 window.CONFIG = {
   MAIN_VERSION: '2.8',
-  SUB_VERSION: 16,
+  SUB_VERSION: 17,
   get VERSION() { return `v${this.MAIN_VERSION}.${this.SUB_VERSION}`; },
   // World & Physics Settings
   MAP_WIDTH: 3600,

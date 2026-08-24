@@ -83,14 +83,14 @@ class Aircraft {
         isInputtingDirection = true;
       }
 
-      // Smooth Jet Turn Interpolation (No rapid spinning near mouse)
+      // Smooth Jet Turn Interpolation (Direct, comfortable steering)
       if (isInputtingDirection) {
         const angleDiff = Math.atan2(Math.sin(targetAngle - this.rotation), Math.cos(targetAngle - this.rotation));
-        this.rotation += Math.sign(angleDiff) * Math.min(Math.abs(angleDiff), 6.5 * dt);
+        this.rotation += Math.sign(angleDiff) * Math.min(Math.abs(angleDiff), 8.0 * dt);
       }
 
-      // Jet Forward Velocity (Smooth 420 px/sec flight speed)
-      this.speed = 420;
+      // Jet Forward Velocity (2x Slower Precision Flight Speed: 210 px/sec)
+      this.speed = 210;
       this.x += Math.cos(this.rotation) * this.speed * dt;
       this.y += Math.sin(this.rotation) * this.speed * dt;
 
