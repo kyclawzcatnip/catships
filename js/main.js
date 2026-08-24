@@ -153,6 +153,9 @@ class GameEngine {
     this.camera.x = Math.max(0, Math.min(CONFIG.MAP_WIDTH - this.camera.viewportWidth, targetCamX));
     this.camera.y = Math.max(0, Math.min(CONFIG.MAP_HEIGHT - this.camera.viewportHeight, targetCamY));
 
+    InputHandler.resetMouse();
+    this.playerShip.turretAngle = this.playerShip.rotation;
+
     // Setup Fleet Roster according to Battle Type & Fleet Size
     this.setupFleetForMode(this.battleSettings, diff);
   }
@@ -450,11 +453,13 @@ class GameEngine {
           this.lockedTarget.y - this.playerShip.y,
           this.lockedTarget.x - this.playerShip.x
         );
-      } else {
+      } else if (InputHandler.mouse.hasMoved) {
         this.playerShip.turretAngle = Math.atan2(
           InputHandler.mouse.worldY - this.playerShip.y,
           InputHandler.mouse.worldX - this.playerShip.x
         );
+      } else {
+        this.playerShip.turretAngle = this.playerShip.rotation;
       }
 
       // Fire Main Cannon

@@ -14,8 +14,10 @@ class Camera {
   }
 
   resize(width, height) {
-    this.viewportWidth = width;
-    this.viewportHeight = height;
+    this.viewportWidth = width || (typeof window !== 'undefined' ? window.innerWidth : 1280);
+    this.viewportHeight = height || (typeof window !== 'undefined' ? window.innerHeight : 720);
+    this.x = Math.max(0, Math.min(CONFIG.MAP_WIDTH - this.viewportWidth, this.x));
+    this.y = Math.max(0, Math.min(CONFIG.MAP_HEIGHT - this.viewportHeight, this.y));
   }
 
   follow(targetX, targetY) {

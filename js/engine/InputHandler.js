@@ -116,6 +116,10 @@ class InputHandlerClass {
     this.mouse.worldY = this.mouse.y + camera.y;
   }
 
+  resetMouse() {
+    this.mouse.hasMoved = false;
+  }
+
   isForward() {
     return !!(this.keys['KeyW'] || this.keys['ArrowUp'] || this.keys['w'] || this.keys['W']);
   }
