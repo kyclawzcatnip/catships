@@ -50,43 +50,48 @@ class Aircraft {
     }
 
     if (this.isPlayerControlled && inputHandler) {
-      // --- PLAYER DIRECT PILOTING MODE ---
-      // Smooth WASD & Keyboard Flight Vector Controls (Zero spinning circles!)
-      this.lifeTimer = 9999; // Infinite flight timer when player is piloting!
+      // --- PLAYER DIRECT AIRCRAFT FLIGHT ENGINE (100% Independent from Ship Controls!) ---
+      this.lifeTimer = 9999; // Infinite flight timer while player is piloting
+
+      const k = inputHandler.keys || {};
+      const up = !!(k['KeyW'] || k['ArrowUp']);
+      const down = !!(k['KeyS'] || k['ArrowDown']);
+      const left = !!(k['KeyA'] || k['ArrowLeft']);
+      const right = !!(k['KeyD'] || k['ArrowRight']);
 
       let targetAngle = this.rotation;
-      let isInputtingDirection = false;
+      let hasInput = false;
 
-      if (inputHandler.isTurnLeft() && inputHandler.isForward()) {
+      if (up && left) {
         targetAngle = -Math.PI * 0.75; // Up-Left
-        isInputtingDirection = true;
-      } else if (inputHandler.isTurnRight() && inputHandler.isForward()) {
+        hasInput = true;
+      } else if (up && right) {
         targetAngle = -Math.PI * 0.25; // Up-Right
-        isInputtingDirection = true;
-      } else if (inputHandler.isTurnLeft() && inputHandler.isBackward()) {
+        hasInput = true;
+      } else if (down && left) {
         targetAngle = Math.PI * 0.75; // Down-Left
-        isInputtingDirection = true;
-      } else if (inputHandler.isTurnRight() && inputHandler.isBackward()) {
+        hasInput = true;
+      } else if (down && right) {
         targetAngle = Math.PI * 0.25; // Down-Right
-        isInputtingDirection = true;
-      } else if (inputHandler.isForward()) {
-        targetAngle = -Math.PI * 0.5; // Up
-        isInputtingDirection = true;
-      } else if (inputHandler.isBackward()) {
-        targetAngle = Math.PI * 0.5; // Down
-        isInputtingDirection = true;
-      } else if (inputHandler.isTurnLeft()) {
-        targetAngle = Math.PI; // Left
-        isInputtingDirection = true;
-      } else if (inputHandler.isTurnRight()) {
-        targetAngle = 0; // Right
-        isInputtingDirection = true;
+        hasInput = true;
+      } else if (up) {
+        targetAngle = -Math.PI * 0.5; // Up (-90 deg)
+        hasInput = true;
+      } else if (down) {
+        targetAngle = Math.PI * 0.5; // Down (+90 deg)
+        hasInput = true;
+      } else if (left) {
+        targetAngle = Math.PI; // Left (180 deg)
+        hasInput = true;
+      } else if (right) {
+        targetAngle = 0; // Right (0 deg)
+        hasInput = true;
       }
 
-      // Smooth Jet Turn Interpolation (Direct, comfortable steering)
-      if (isInputtingDirection) {
+      // Smooth Jet Turn Interpolation (Direct 9.0 * dt response rate)
+      if (hasInput) {
         const angleDiff = Math.atan2(Math.sin(targetAngle - this.rotation), Math.cos(targetAngle - this.rotation));
-        this.rotation += Math.sign(angleDiff) * Math.min(Math.abs(angleDiff), 8.0 * dt);
+        this.rotation += Math.sign(angleDiff) * Math.min(Math.abs(angleDiff), 9.0 * dt);
       }
 
       // Jet Forward Velocity (2x Slower Precision Flight Speed: 210 px/sec)

@@ -133,6 +133,9 @@ window.ABILITIES = {
           Renderer.addFloatingText(ship.x, ship.y - 45, '♾️ INFINITY CATNIP (3x BULLET DA)!', '#ffd700');
         }
         break;
+      case 101: ship.applyBuff('stealth', 5.0); this.fireTorpedoSpread(ship, world); break; // Catnip Submarine
+      case 102: ship.applyBuff('stealth', 6.0); this.fireDarkTorpedoes(ship, world); break; // Dark Stealth Submarine
+      case 103: ship.applyBuff('stealth', 5.0); this.fireSuperSalvo(ship, world); this.fireTorpedoSpread(ship, world); break; // Catnip Nuclear Submarine
 
       default:
         ship.applyBuff('speed', 5, { multiplier: 1.3 });
