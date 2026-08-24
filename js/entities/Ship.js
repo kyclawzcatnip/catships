@@ -81,7 +81,11 @@ class Ship {
         this.targetSpeed = 0;
       }
 
-      const maxTurnSpeed = CONFIG.BASE_TURN_SPEED * 1.4 * (sp / 5);
+      const isRusher = (this.data && (this.data.type === 'Rusher' || this.data.isRusher));
+      // Realism Hydrodynamics: Non-rushers need water flow over rudder to steer; Rushers turn 360 at 0 speed!
+      const rudderAuthority = isRusher ? 1.0 : Math.min(1.0, Math.abs(this.currentSpeed) / 25);
+
+      const maxTurnSpeed = CONFIG.BASE_TURN_SPEED * 1.4 * (sp / 5) * rudderAuthority;
       let targetAngularVel = 0;
       if (inputHandler.isTurnLeft()) {
         targetAngularVel = -maxTurnSpeed;
