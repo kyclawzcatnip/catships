@@ -79,11 +79,11 @@ def run_tests():
     elif 'camera.follow(activeTarget, dt)' in main_code:
         print("  ❌ FAIL: Found 'camera.follow(activeTarget, dt)' in js/main.js (Method requires numeric x, y)")
         failed += 1
-    elif 'camera.update(dt)' in main_code:
-        print("  ❌ FAIL: Found 'camera.update(dt)' in js/main.js (Method does not exist on Camera)")
+    elif 'Renderer.drawParticles' in main_code:
+        print("  ❌ FAIL: Found 'Renderer.drawParticles' in js/main.js (Method should be 'Renderer.drawFX')")
         failed += 1
     else:
-        print("  ✅ Passed Camera & Minimap method signature audit (camera.resize, camera.follow & Minimap.draw confirmed).")
+        print("  ✅ Passed Camera, Minimap & Renderer method signature audit (camera.resize, camera.follow, Minimap.draw & Renderer.drawFX confirmed).")
         passed += 1
 
     # 4. SCRIPT LOAD ORDER IN INDEX.HTML

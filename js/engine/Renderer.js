@@ -255,6 +255,14 @@ class RendererEngine {
     ctx.restore();
   }
 
+  drawParticles(ctx, camera) {
+    this.drawFX(ctx, camera);
+  }
+
+  drawFloatingTexts(ctx, camera) {
+    // Handled seamlessly within drawFX
+  }
+
   /**
    * Render FX, Particles & Floating Text
    */

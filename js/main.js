@@ -680,8 +680,7 @@ class GameEngine {
     }
 
     // 5. Draw Particle Explosions & Floating Text
-    Renderer.drawParticles(this.ctx, this.camera);
-    Renderer.drawFloatingTexts(this.ctx, this.camera);
+    Renderer.drawFX(this.ctx, this.camera);
 
     // 6. Draw Minimap Radar
     Minimap.draw(this.world, this.camera);
