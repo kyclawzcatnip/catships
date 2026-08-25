@@ -2,8 +2,8 @@
  * Catnip Warships — Global Configuration & Constants
  */
 window.CONFIG = {
-  MAIN_VERSION: '2.8',
-  SUB_VERSION: 29, // Versioning Rule: Resets to 0 and +1 to MAIN_VERSION when SUB_VERSION reaches 30
+  MAIN_VERSION: '2.9',
+  SUB_VERSION: 0, // Versioning Rule: Resets to 0 and +1 to MAIN_VERSION when SUB_VERSION reaches 30
   get VERSION() { return `v${this.MAIN_VERSION}.${this.SUB_VERSION}`; },
   // World & Physics Settings
   MAP_WIDTH: 3600,

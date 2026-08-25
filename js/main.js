@@ -828,6 +828,19 @@ class GameEngine {
     } else if (redAlive === 0) {
       this.isEndingMatch = true;
       this.state = 'ENDGAME';
+
+      if (this.isStoryMode && this.storyMission && window.StoryMode) {
+        // Save Mission Completion to StoryMode & localStorage!
+        window.StoryMode.completeMission(this.storyMission.id);
+
+        if (this.storyMission.debriefing) {
+          window.StoryMode.showBriefingOverlay(this.storyMission.debriefing, () => {
+            EndGameUI.show(true, this.playerShip);
+          });
+          return;
+        }
+      }
+
       EndGameUI.show(true, this.playerShip);
     }
   }
