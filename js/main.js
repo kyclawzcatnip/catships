@@ -115,8 +115,10 @@ class GameEngine {
     this.gameMode = this.battleSettings.battleType || 'skirmish';
     this.state = 'BATTLE';
     this.isEndingMatch = false;
-    this.isStoryMode = false;
-    this.storyMission = null;
+    if (this.battleSettings.battleType !== 'story') {
+      this.isStoryMode = false;
+      this.storyMission = null;
+    }
 
     window.CatnipMain = this;
     this.lockedTarget = null;
@@ -835,8 +837,11 @@ class GameEngine {
 
         if (this.storyMission.debriefing) {
           window.StoryMode.showBriefingOverlay(this.storyMission.debriefing, () => {
-            EndGameUI.show(true, this.playerShip);
+            window.StoryMode.showMissionAccomplishedModal(this.storyMission);
           });
+          return;
+        } else {
+          window.StoryMode.showMissionAccomplishedModal(this.storyMission);
           return;
         }
       }
