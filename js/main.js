@@ -590,6 +590,29 @@ class GameEngine {
         continue;
       }
 
+      // Check Projectile Collisions vs Enemy Aircraft (Aerial Dogfighting!)
+      const aircraftCount = this.world.aircraft ? this.world.aircraft.length : 0;
+      let hitAircraft = false;
+      for (let k = 0; k < aircraftCount; k++) {
+        const jet = this.world.aircraft[k];
+        if (jet && !jet.isDestroyed && jet.team !== p.team) {
+          const hitDist = (jet.length / 2.0) + p.radius;
+          const dx = jet.x - p.x;
+          const dy = jet.y - p.y;
+          if (p.distanceTraveled > 8 && Math.hypot(dx, dy) < hitDist) {
+            jet.takeDamage(p.damage);
+            p.isDestroyed = true;
+            hitAircraft = true;
+            if (window.Renderer) {
+              Renderer.addParticleBurst(p.x, p.y, '#ffd700', 10);
+              Renderer.addFloatingText(jet.x, jet.y - 25, '💥 DOGFIGHT HIT!', '#ff3366');
+            }
+            break;
+          }
+        }
+      }
+      if (hitAircraft) continue;
+
       // Cannon Shell vs Target Ships Collision
       for (let j = 0; j < shipsCount; j++) {
         const target = this.world.ships[j];

@@ -144,11 +144,29 @@ class Aircraft {
           Renderer.addFloatingText(this.x, this.y - 30, '🚀 SIDEWINDER MISSILE!', '#ff3366');
         }
       }
-    } else {
       // --- AI FREE-ROAMING STRIKE SORTIE MODE ---
-      // Search for nearest enemy ship across the ENTIRE map
+      // Search for nearest enemy aircraft OR enemy ship (Dogfight Priority!)
       if (!this.targetEntity || this.targetEntity.isDestroyed) {
-        this.targetEntity = world ? world.findNearestEnemy(this) : null;
+        let nearest = null;
+        let minDist = 99999;
+
+        if (world && world.aircraft) {
+          world.aircraft.forEach(otherJet => {
+            if (otherJet && !otherJet.isDestroyed && otherJet.team !== this.team && otherJet !== this) {
+              const d = this.distanceTo(otherJet);
+              if (d < minDist) {
+                minDist = d;
+                nearest = otherJet;
+              }
+            }
+          });
+        }
+
+        if (!nearest && world) {
+          nearest = world.findNearestEnemy(this);
+        }
+
+        this.targetEntity = nearest;
       }
 
       let desiredAngle = this.rotation;
