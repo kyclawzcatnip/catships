@@ -861,6 +861,10 @@ function bootGameEngine() {
   if (verTag && typeof CONFIG !== 'undefined' && CONFIG.VERSION) {
     verTag.innerText = `⚡ ${CONFIG.VERSION} — 📖 Story Campaign Edition`;
   }
+  const verInline = document.querySelector('.version-badge-inline');
+  if (verInline && typeof CONFIG !== 'undefined' && CONFIG.VERSION) {
+    verInline.innerText = CONFIG.VERSION;
+  }
 }
 
 if (document.readyState === 'loading') {
