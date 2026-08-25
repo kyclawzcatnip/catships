@@ -125,40 +125,86 @@ class RendererEngine {
     // Rotate context to ship angle
     ctx.rotate(ship.rotation);
 
-    // 5. Ship Hull Drawing
+    // 5. Ship / Submarine Hull Drawing
     const halfL = ship.length / 2;
     const halfW = ship.width / 2;
+    const isSub = !!(ship.data && (ship.data.type === 'Submarine' || ship.data.id >= 101));
 
-    ctx.fillStyle = ship.data.color;
-    ctx.strokeStyle = ship.data.isDark ? '#240046' : '#ffffff';
-    ctx.lineWidth = 2;
+    if (isSub) {
+      // 🤿 UNIQUE SUBMARINE HULL MODEL!
+      // 1. Hydrodynamic Cylindrical Submarine Hull (Rounded Bow & Tapered Stern)
+      ctx.fillStyle = ship.data.color || '#00b4d8';
+      ctx.strokeStyle = ship.data.isDark ? '#3a0ca3' : '#00e5ff';
+      ctx.lineWidth = 2.5;
 
-    // Pointed Bow (Front) & Sleek Stern (Back)
-    ctx.beginPath();
-    ctx.moveTo(halfL, 0); // Bow tip
-    ctx.lineTo(halfL * 0.4, halfW); // Right shoulder
-    ctx.lineTo(-halfL * 0.8, halfW * 0.8); // Rear right
-    ctx.lineTo(-halfL * 0.8, -halfW * 0.8); // Rear left
-    ctx.lineTo(halfL * 0.4, -halfW); // Left shoulder
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
+      ctx.beginPath();
+      ctx.ellipse(0, 0, halfL, halfW * 0.95, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
 
-    // 6. Deck Bridge & CAT EARS!
-    ctx.fillStyle = ship.team === 'blue' ? '#00e5ff' : '#ff4d4d';
-    // Shift cabin bridge slightly so it doesn't overlap midship turret
-    ctx.fillRect(-halfL * 0.35, -halfW * 0.4, halfL * 0.3, halfW * 0.8);
+      // 2. Side Hydroplane Diving Fins
+      ctx.fillStyle = ship.data.isDark ? '#10002b' : '#0077b6';
+      ctx.fillRect(-halfL * 0.2, -halfW * 1.35, halfL * 0.4, halfW * 0.45);
+      ctx.fillRect(-halfL * 0.2, halfW * 0.9, halfL * 0.4, halfW * 0.45);
 
-    // Cute Cat Ears on Bridge
-    ctx.fillStyle = '#ffffff';
-    ctx.beginPath();
-    ctx.moveTo(-halfL * 0.25, -halfW * 0.4);
-    ctx.lineTo(-halfL * 0.15, -halfW * 0.8);
-    ctx.lineTo(-halfL * 0.1, -halfW * 0.4);
-    ctx.moveTo(-halfL * 0.25, halfW * 0.4);
-    ctx.lineTo(-halfL * 0.15, halfW * 0.8);
-    ctx.lineTo(-halfL * 0.1, halfW * 0.4);
-    ctx.fill();
+      // 3. Central Submarine Conning Tower (Sail)
+      ctx.fillStyle = ship.team === 'blue' ? '#00e5ff' : '#9d4edd';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, halfL * 0.35, halfW * 0.45, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // 4. Periscope & Cat Ear Antennas on Sail
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(halfL * 0.05, -1.5, halfL * 0.25, 3); // Periscope arm
+
+      // Twin Cat Ears on Conning Tower Sail
+      ctx.beginPath();
+      ctx.moveTo(-halfL * 0.1, -halfW * 0.45);
+      ctx.lineTo(0, -halfW * 0.85);
+      ctx.lineTo(halfL * 0.1, -halfW * 0.45);
+      ctx.moveTo(-halfL * 0.1, halfW * 0.45);
+      ctx.lineTo(0, halfW * 0.85);
+      ctx.lineTo(halfL * 0.1, halfW * 0.45);
+      ctx.fill();
+
+      // 5. Dual Front Torpedo Launch Tube Ports [•] [•]
+      ctx.fillStyle = '#ff3366';
+      ctx.beginPath();
+      ctx.arc(halfL * 0.82, -halfW * 0.35, 2.5, 0, Math.PI * 2);
+      ctx.arc(halfL * 0.82, halfW * 0.35, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      // Standard Warship Hull Drawing
+      ctx.fillStyle = ship.data.color;
+      ctx.strokeStyle = ship.data.isDark ? '#240046' : '#ffffff';
+      ctx.lineWidth = 2;
+
+      ctx.beginPath();
+      ctx.moveTo(halfL, 0); // Bow tip
+      ctx.lineTo(halfL * 0.4, halfW); // Right shoulder
+      ctx.lineTo(-halfL * 0.8, halfW * 0.8); // Rear right
+      ctx.lineTo(-halfL * 0.8, -halfW * 0.8); // Rear left
+      ctx.lineTo(halfL * 0.4, -halfW); // Left shoulder
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Deck Bridge & Cat Ears
+      ctx.fillStyle = ship.team === 'blue' ? '#00e5ff' : '#ff4d4d';
+      ctx.fillRect(-halfL * 0.35, -halfW * 0.4, halfL * 0.3, halfW * 0.8);
+
+      // Cute Cat Ears on Bridge
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.moveTo(-halfL * 0.25, -halfW * 0.4);
+      ctx.lineTo(-halfL * 0.15, -halfW * 0.8);
+      ctx.lineTo(-halfL * 0.1, -halfW * 0.4);
+      ctx.moveTo(-halfL * 0.25, halfW * 0.4);
+      ctx.lineTo(-halfL * 0.15, halfW * 0.8);
+      ctx.lineTo(-halfL * 0.1, halfW * 0.4);
+      ctx.fill();
+    }
 
     // 7. Paw Print Emblem on Deck
     ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
