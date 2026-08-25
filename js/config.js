@@ -3,7 +3,7 @@
  */
 window.CONFIG = {
   MAIN_VERSION: '2.8',
-  SUB_VERSION: 25,
+  SUB_VERSION: 25, // Versioning Rule: Resets to 0 and +1 to MAIN_VERSION when SUB_VERSION reaches 30
   get VERSION() { return `v${this.MAIN_VERSION}.${this.SUB_VERSION}`; },
   // World & Physics Settings
   MAP_WIDTH: 3600,
