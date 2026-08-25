@@ -129,12 +129,32 @@
                   <label for="setting-battle-type">⚔️ Scenario:</label>
                   <select id="setting-battle-type">
                     <option value="skirmish" selected>5v5 Fleet Skirmish</option>
-                    <option value="outnumbered">⚠️ Outnumbered (3 vs 8 Clash!)</option>
+                    <option value="outnumbered">⚠️ Outnumbered (Custom Clash!)</option>
                     <option value="ambush">⚓ Protect Carrier Ambush</option>
                     <option value="boss">👑 Boss Rush (Vs Ultimate #30)</option>
                     <option value="survival">🌊 Wave Survival Mode</option>
                     <option value="testdrive">🎯 Target Range (Test Drive)</option>
                   </select>
+                </div>
+
+                <!-- CUSTOM OUTNUMBERED FLEET COUNT CONTROLLER (Cap = 50) -->
+                <div id="outnumbered-count-panel" class="setting-row custom-fleet-counts hidden">
+                  <div class="count-group">
+                    <label>Yours (Allies):</label>
+                    <div class="stepper-box">
+                      <button id="btn-ally-minus" class="btn-stepper">-</button>
+                      <input id="input-ally-count" type="number" min="1" max="50" value="3" />
+                      <button id="btn-ally-plus" class="btn-stepper">+</button>
+                    </div>
+                  </div>
+                  <div class="count-group">
+                    <label>Enemys (Dark Fleet):</label>
+                    <div class="stepper-box">
+                      <button id="btn-enemy-minus" class="btn-stepper">-</button>
+                      <input id="input-enemy-count" type="number" min="1" max="50" value="8" />
+                      <button id="btn-enemy-plus" class="btn-stepper">+</button>
+                    </div>
+                  </div>
                 </div>
 
                 <div class="setting-row">
@@ -319,32 +339,32 @@
   </div>
 
   <!-- Version Tag (Bottom-Left) -->
-  <div class="version-tag">⚡ v2.8.24 — Tactical Scenarios & AA Flak Edition</div>
+  <div class="version-tag">⚡ v2.8.25 — Tactical Scenarios & AA Flak Edition</div>
 
   <!-- SCRIPTS MODULE LOAD ORDER -->
-  <script src="js/config.js?v=2.8.24"></script>
-  <script src="js/shipsData.js?v=2.8.24"></script>
-  <script src="js/abilities.js?v=2.8.24"></script>
+  <script src="js/config.js?v=2.8.25"></script>
+  <script src="js/shipsData.js?v=2.8.25"></script>
+  <script src="js/abilities.js?v=2.8.25"></script>
   
-  <script src="js/engine/Vector2D.js?v=2.8.24"></script>
-  <script src="js/engine/AudioSystem.js?v=2.8.24"></script>
-  <script src="js/engine/InputHandler.js?v=2.8.24"></script>
-  <script src="js/engine/Camera.js?v=2.8.24"></script>
-  <script src="js/engine/Map.js?v=2.8.24"></script>
-  <script src="js/engine/Physics.js?v=2.8.24"></script>
-  <script src="js/engine/Renderer.js?v=2.8.24"></script>
+  <script src="js/engine/Vector2D.js?v=2.8.25"></script>
+  <script src="js/engine/AudioSystem.js?v=2.8.25"></script>
+  <script src="js/engine/InputHandler.js?v=2.8.25"></script>
+  <script src="js/engine/Camera.js?v=2.8.25"></script>
+  <script src="js/engine/Map.js?v=2.8.25"></script>
+  <script src="js/engine/Physics.js?v=2.8.25"></script>
+  <script src="js/engine/Renderer.js?v=2.8.25"></script>
   
-  <script src="js/entities/Particle.js?v=2.8.24"></script>
-  <script src="js/entities/Projectile.js?v=2.8.24"></script>
-  <script src="js/entities/Aircraft.js?v=2.8.24"></script>
-  <script src="js/entities/Ship.js?v=2.8.24"></script>
+  <script src="js/entities/Particle.js?v=2.8.25"></script>
+  <script src="js/entities/Projectile.js?v=2.8.25"></script>
+  <script src="js/entities/Aircraft.js?v=2.8.25"></script>
+  <script src="js/entities/Ship.js?v=2.8.25"></script>
   
-  <script src="js/ai/FleetAI.js?v=2.8.24"></script>
-  <script src="js/ui/HangarUI.js?v=2.8.24"></script>
-  <script src="js/ui/HUD.js?v=2.8.24"></script>
-  <script src="js/ui/Minimap.js?v=2.8.24"></script>
-  <script src="js/ui/EndGameUI.js?v=2.8.24"></script>
+  <script src="js/ai/FleetAI.js?v=2.8.25"></script>
+  <script src="js/ui/HangarUI.js?v=2.8.25"></script>
+  <script src="js/ui/HUD.js?v=2.8.25"></script>
+  <script src="js/ui/Minimap.js?v=2.8.25"></script>
+  <script src="js/ui/EndGameUI.js?v=2.8.25"></script>
   
-  <script src="js/main.js?v=2.8.24"></script>
+  <script src="js/main.js?v=2.8.25"></script>
 </body>
 </html>

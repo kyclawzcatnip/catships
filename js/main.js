@@ -193,25 +193,35 @@ class GameEngine {
     }
 
     if (mode === 'outnumbered') {
-      // ⚠️ OUTNUMBERED CLASH: True 3 Allies (Player + #29 Super Battleship + #9 Battleship) vs 8 Hostile Enemies!
-      const allyIds = [29, 9];
-      allyIds.forEach((id, idx) => {
-        const data = SHIPS_DATA.find(s => s.id === id);
-        const ally = new Ship(data, 'blue', 500, CONFIG.MAP_HEIGHT / 2 + (idx - 0.5) * 160);
+      // ⚠️ CUSTOM OUTNUMBERED FLEET CLASH (Supports 1 to 50 Allies vs 1 to 50 Enemies!)
+      const targetAllyTotal = Math.min(50, Math.max(1, (settings && settings.allyCount) || 3));
+      const targetEnemyTotal = Math.min(50, Math.max(1, (settings && settings.enemyCount) || 8));
+
+      // Spawn Additional Ally Ships (Target Ally Total - 1 for Player Ship)
+      const alliesToSpawn = targetAllyTotal - 1;
+      for (let i = 0; i < alliesToSpawn; i++) {
+        const sampleId = [29, 9, 7, 18, 76, 88, 98][i % 7];
+        const data = SHIPS_DATA.find(s => s.id === sampleId) || SHIPS_DATA[0];
+        const col = Math.floor(i / 5);
+        const row = i % 5;
+        const ally = new Ship(data, 'blue', 450 - col * 120, 400 + row * 220);
         ally.maxHp = Math.round(ally.maxHp * diff.allyHpMult);
         ally.hp = ally.maxHp;
         if (cdMult < 1.0) ally.baseReloadTime *= cdMult;
         this.world.ships.push(ally);
-      });
+      }
 
-      const enemyIds = [2, 8, 14, 17, 22, 28, 35, 38]; // 8 Hostile warships
-      enemyIds.forEach((id, idx) => {
-        const data = SHIPS_DATA.find(s => s.id === id);
-        const enemy = new Ship(data, 'red', CONFIG.MAP_WIDTH - 750 - Math.floor(idx / 3) * 160, 600 + (idx % 3) * 280);
+      // Spawn Custom Enemy Ships (Target Enemy Total, up to 50 cap!)
+      for (let i = 0; i < targetEnemyTotal; i++) {
+        const sampleId = [2, 8, 14, 17, 22, 28, 35, 38, 42, 45, 52, 67, 73, 77, 85, 93, 99][i % 17];
+        const data = SHIPS_DATA.find(s => s.id === sampleId) || SHIPS_DATA[1];
+        const col = Math.floor(i / 6);
+        const row = i % 6;
+        const enemy = new Ship(data, 'red', CONFIG.MAP_WIDTH - 650 - col * 140, 350 + row * 200);
         enemy.damage = Math.round(enemy.damage * diff.enemyDmgMult);
         if (cdMult < 1.0) enemy.baseReloadTime *= cdMult;
         this.world.ships.push(enemy);
-      });
+      }
     } else if (mode === 'ambush') {
       // ⚓ PROTECT CARRIER AMBUSH: ATTACK vs DEFEND Role Selection
       const isAttacker = (settings && settings.ambushSide === 'ATTACK');

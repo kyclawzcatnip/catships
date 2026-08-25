@@ -981,3 +981,59 @@ kbd {
   border-color: #00e5ff;
   box-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
 }
+
+.custom-fleet-counts {
+  flex-direction: column;
+  gap: 0.5rem;
+  background: rgba(0, 229, 255, 0.08);
+  border: 1px dashed rgba(0, 229, 255, 0.3);
+  padding: 0.6rem;
+  border-radius: 8px;
+}
+
+.count-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.stepper-box {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.stepper-box input {
+  width: 45px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(0, 229, 255, 0.4);
+  color: #39ff14;
+  font-weight: 700;
+  font-family: var(--font-heading);
+  border-radius: 4px;
+  padding: 0.2rem;
+}
+
+.btn-stepper {
+  width: 26px;
+  height: 26px;
+  background: rgba(0, 229, 255, 0.2);
+  border: 1px solid rgba(0, 229, 255, 0.5);
+  color: #fff;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-stepper:hover {
+  background: rgba(0, 229, 255, 0.5);
+  transform: scale(1.05);
+}

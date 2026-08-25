@@ -59,6 +59,54 @@ class HangarUIClass {
       });
     }
 
+    // Custom Outnumbered Fleet Count Stepper Listeners
+    const allyInput = document.getElementById('input-ally-count');
+    const enemyInput = document.getElementById('input-enemy-count');
+    const allyMinus = document.getElementById('btn-ally-minus');
+    const allyPlus = document.getElementById('btn-ally-plus');
+    const enemyMinus = document.getElementById('btn-enemy-minus');
+    const enemyPlus = document.getElementById('btn-enemy-plus');
+
+    const updateCounts = () => {
+      this.updateLaunchButtonText();
+    };
+
+    if (allyMinus && allyInput) {
+      allyMinus.addEventListener('click', (e) => {
+        e.preventDefault();
+        let val = Math.max(1, (parseInt(allyInput.value) || 3) - 1);
+        allyInput.value = val;
+        updateCounts();
+      });
+    }
+    if (allyPlus && allyInput) {
+      allyPlus.addEventListener('click', (e) => {
+        e.preventDefault();
+        let val = Math.min(50, (parseInt(allyInput.value) || 3) + 1);
+        allyInput.value = val;
+        updateCounts();
+      });
+    }
+    if (enemyMinus && enemyInput) {
+      enemyMinus.addEventListener('click', (e) => {
+        e.preventDefault();
+        let val = Math.max(1, (parseInt(enemyInput.value) || 8) - 1);
+        enemyInput.value = val;
+        updateCounts();
+      });
+    }
+    if (enemyPlus && enemyInput) {
+      enemyPlus.addEventListener('click', (e) => {
+        e.preventDefault();
+        let val = Math.min(50, (parseInt(enemyInput.value) || 8) + 1);
+        enemyInput.value = val;
+        updateCounts();
+      });
+    }
+
+    if (allyInput) allyInput.addEventListener('input', updateCounts);
+    if (enemyInput) enemyInput.addEventListener('input', updateCounts);
+
     // Launch Battle button
     const launchBtn = document.getElementById('btn-deploy-ship');
     if (launchBtn) {
@@ -80,7 +128,9 @@ class HangarUIClass {
           mapTheme: themeSelect ? themeSelect.value : 'tropical',
           weather: weatherSelect ? weatherSelect.value : 'clear',
           fleetSize: fleetSelect ? fleetSelect.value : '5v5',
-          cooldownSpeed: cdSelect ? parseFloat(cdSelect.value) : 1.0
+          cooldownSpeed: cdSelect ? parseFloat(cdSelect.value) : 1.0,
+          allyCount: allyInput ? Math.min(50, Math.max(1, parseInt(allyInput.value) || 3)) : 3,
+          enemyCount: enemyInput ? Math.min(50, Math.max(1, parseInt(enemyInput.value) || 8)) : 8
         };
 
         if (this.onLaunch) {
