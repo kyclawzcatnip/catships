@@ -114,6 +114,10 @@ class GameEngine {
     this.gameMode = this.battleSettings.battleType || 'skirmish';
     this.state = 'BATTLE';
     this.isEndingMatch = false;
+    this.isStoryMode = false;
+    this.storyMission = null;
+
+    window.CatnipMain = this;
     this.lockedTarget = null;
     this.fleetCommand = 'ATTACK';
     this.isPilotingPlane = false;
@@ -179,6 +183,29 @@ class GameEngine {
     this.setupFleetForMode(this.battleSettings, diff);
   }
 
+  launchStoryMission(ch) {
+    if (!ch) return;
+    this.isStoryMode = true;
+    this.storyMission = ch;
+
+    const settings = {
+      difficulty: ch.difficulty || 'normal',
+      battleType: 'story',
+      mapTheme: ch.mapTheme || 'tropical',
+      weather: ch.weather || 'clear',
+      fleetSize: '5v5',
+      cooldownSpeed: 1.0,
+      allyCount: ch.allyCount || 1,
+      enemyCount: ch.enemyFleet ? ch.enemyFleet.length : 3
+    };
+
+    this.launchBattle(ch.playerShipId || 1, settings);
+
+    if (window.StoryMode && ch.briefing) {
+      window.StoryMode.showBriefingOverlay(ch.briefing);
+    }
+  }
+
   setupFleetForMode(settings, diff) {
     let mode = 'skirmish';
     let fleetSize = '5v5';
@@ -219,9 +246,29 @@ class GameEngine {
         const row = i % 6;
         const enemy = new Ship(data, 'red', CONFIG.MAP_WIDTH - 650 - col * 140, 350 + row * 200);
         enemy.damage = Math.round(enemy.damage * diff.enemyDmgMult);
-        if (cdMult < 1.0) enemy.baseReloadTime *= cdMult;
         this.world.ships.push(enemy);
       }
+    } else if (mode === 'story' && this.storyMission) {
+      const ch = this.storyMission;
+      const allyCount = ch.allyCount || 1;
+      for (let i = 0; i < allyCount - 1; i++) {
+        const sampleId = [29, 9, 7, 18, 76, 88, 98][i % 7];
+        const data = SHIPS_DATA.find(s => s.id === sampleId) || SHIPS_DATA[0];
+        const ally = new Ship(data, 'blue', 500 - i * 140, CONFIG.MAP_HEIGHT / 2 + (i % 2 === 0 ? 180 : -180));
+        ally.maxHp = Math.round(ally.maxHp * diff.allyHpMult);
+        ally.hp = ally.maxHp;
+        this.world.ships.push(ally);
+      }
+
+      const enemyIds = ch.enemyFleet || [2, 10, 11];
+      enemyIds.forEach((id, idx) => {
+        const data = SHIPS_DATA.find(s => s.id === id) || SHIPS_DATA[1];
+        const col = Math.floor(idx / 4);
+        const row = idx % 4;
+        const enemy = new Ship(data, 'red', CONFIG.MAP_WIDTH - 650 - col * 150, 350 + row * 220);
+        enemy.damage = Math.round(enemy.damage * diff.enemyDmgMult);
+        this.world.ships.push(enemy);
+      });
     } else if (mode === 'ambush') {
       // ⚓ PROTECT CARRIER AMBUSH: ATTACK vs DEFEND Role Selection
       const isAttacker = (settings && settings.ambushSide === 'ATTACK');

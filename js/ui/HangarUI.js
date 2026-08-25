@@ -42,6 +42,27 @@ class HangarUIClass {
       });
     }
 
+    // Story Mode Campaign UI Event Listeners
+    const btnStory = document.getElementById('btn-open-story-mode');
+    const btnCloseStory = document.getElementById('btn-close-story');
+    const btnBackHangar = document.getElementById('btn-back-to-hangar');
+
+    if (btnStory) {
+      btnStory.addEventListener('click', () => {
+        if (window.StoryMode) window.StoryMode.openChapterSelectModal();
+      });
+    }
+    if (btnCloseStory) {
+      btnCloseStory.addEventListener('click', () => {
+        if (window.StoryMode) window.StoryMode.closeChapterSelectModal();
+      });
+    }
+    if (btnBackHangar) {
+      btnBackHangar.addEventListener('click', () => {
+        if (window.StoryMode) window.StoryMode.closeChapterSelectModal();
+      });
+    }
+
     // Sync top header Game Mode dropdown and update Launch Button label dynamically
     const modeSelectHeader = document.getElementById('game-mode-select');
     const typeSelectPanel = document.getElementById('setting-battle-type');
