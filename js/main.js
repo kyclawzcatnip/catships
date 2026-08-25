@@ -3,6 +3,7 @@
  */
 class GameEngine {
   constructor() {
+    window.CatnipMain = this;
     this.canvas = document.getElementById('game-canvas');
     this.ctx = this.canvas.getContext('2d');
 
@@ -837,9 +838,10 @@ function bootGameEngine() {
   if (!window.Game) {
     window.Game = new GameEngine();
   }
+  window.CatnipMain = window.Game;
   const verTag = document.querySelector('.version-tag');
   if (verTag && typeof CONFIG !== 'undefined' && CONFIG.VERSION) {
-    verTag.innerText = `⚡ ${CONFIG.VERSION} — Tactical Scenarios & AA Flak Edition`;
+    verTag.innerText = `⚡ ${CONFIG.VERSION} — 📖 Story Campaign Edition`;
   }
 }
 
