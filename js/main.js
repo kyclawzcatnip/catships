@@ -251,7 +251,7 @@ class GameEngine {
         enemy.damage = Math.round(enemy.damage * diff.enemyDmgMult);
         this.world.ships.push(enemy);
       }
-    } else if (mode === 'story' && this.storyMission) {
+    } else if ((mode === 'story' || this.isStoryMode) && this.storyMission) {
       const ch = this.storyMission;
       const allyCount = ch.allyCount || 1;
       for (let i = 0; i < allyCount - 1; i++) {
