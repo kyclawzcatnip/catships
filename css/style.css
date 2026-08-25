@@ -913,10 +913,13 @@ kbd {
   position: fixed;
   bottom: 14px;
   left: 16px;
-  z-index: 9999;
-  background: rgba(15, 23, 42, 0.85);
+  z-index: 99999;
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  background: rgba(15, 23, 42, 0.9);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(0, 229, 255, 0.4);
+  border: 1px solid rgba(0, 229, 255, 0.5);
   border-radius: 20px;
   padding: 6px 14px;
   font-family: var(--font-heading);
@@ -924,7 +927,7 @@ kbd {
   font-weight: 700;
   color: #00e5ff;
   letter-spacing: 0.5px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7);
   pointer-events: none;
 }
 
