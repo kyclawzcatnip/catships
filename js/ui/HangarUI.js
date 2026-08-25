@@ -257,20 +257,32 @@ class HangarUIClass {
   }
 
   updateLaunchButtonText() {
-    const launchBtn = document.getElementById('btn-deploy-ship');
     const modeSelectHeader = document.getElementById('game-mode-select');
-    if (!launchBtn || !modeSelectHeader) return;
+    const launchBtn = document.getElementById('btn-deploy-ship');
+    const panel = document.getElementById('outnumbered-count-panel');
+    const allyInput = document.getElementById('input-ally-count');
+    const enemyInput = document.getElementById('input-enemy-count');
+
+    if (!modeSelectHeader || !launchBtn) return;
+
+    const val = modeSelectHeader.value || 'skirmish';
+
+    if (panel) {
+      panel.classList.toggle('hidden', val !== 'outnumbered');
+    }
+
+    const allyCount = (allyInput && parseInt(allyInput.value)) || 3;
+    const enemyCount = (enemyInput && parseInt(enemyInput.value)) || 8;
 
     const labels = {
-      'skirmish': 'LAUNCH 5v5 FLEET SKIRMISH',
-      'outnumbered': 'LAUNCH 3v8 OUTNUMBERED CLASH!',
+      'skirmish': 'LAUNCH FLEET SKIRMISH',
+      'outnumbered': `LAUNCH ${allyCount} vs ${enemyCount} OUTNUMBERED CLASH!`,
       'ambush': 'LAUNCH PROTECT CARRIER AMBUSH',
       'survival': 'LAUNCH WAVE SURVIVAL MODE',
-      'boss': 'LAUNCH BOSS RUSH VS ULTIMATE #30',
+      'boss': 'LAUNCH BOSS RUSH: ULTIMATE CATNIP',
       'testdrive': 'LAUNCH TARGET RANGE TEST DRIVE'
     };
 
-    const val = modeSelectHeader.value || 'skirmish';
     const labelText = labels[val] || labels['skirmish'];
     launchBtn.innerHTML = `<span class="paw">🐾</span> ${labelText}`;
   }

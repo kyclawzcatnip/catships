@@ -444,12 +444,19 @@ class GameEngine {
   }
 
   togglePause() {
+    const pauseModal = document.getElementById('pause-modal');
     if (this.state === 'BATTLE') {
       this.state = 'PAUSED';
-      document.getElementById('pause-modal').classList.add('active');
+      if (pauseModal) {
+        pauseModal.classList.add('active');
+        pauseModal.classList.remove('hidden');
+      }
     } else if (this.state === 'PAUSED') {
       this.state = 'BATTLE';
-      document.getElementById('pause-modal').classList.remove('active');
+      if (pauseModal) {
+        pauseModal.classList.remove('active');
+        pauseModal.classList.add('hidden');
+      }
     }
   }
 
@@ -463,6 +470,10 @@ class GameEngine {
         this.render();
       } catch (err) {
         console.error("Catnip Warships loop error:", err);
+      }
+    } else if (this.state === 'PAUSED') {
+      if (InputHandler.consumePauseTrigger()) {
+        this.togglePause();
       }
     }
 
