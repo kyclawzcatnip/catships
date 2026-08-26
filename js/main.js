@@ -111,7 +111,9 @@ class GameEngine {
         mapTheme: 'tropical',
         weather: 'clear',
         fleetSize: '5v5',
-        cooldownSpeed: 1.0
+        cooldownSpeed: 1.0,
+        allyCount: 3,
+        enemyCount: 8
       };
     } else if (!settings || typeof settings !== 'object') {
       settings = {
@@ -121,11 +123,13 @@ class GameEngine {
         mapTheme: 'tropical',
         weather: 'clear',
         fleetSize: '5v5',
-        cooldownSpeed: 1.0
+        cooldownSpeed: 1.0,
+        allyCount: 3,
+        enemyCount: 8
       };
     }
 
-    this.battleSettings = settings;
+    this.battleSettings = JSON.parse(JSON.stringify(settings));
     this.difficultyKey = this.battleSettings.difficulty || 'easy';
     this.gameMode = this.battleSettings.battleType || 'skirmish';
     this.state = 'BATTLE';
