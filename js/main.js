@@ -60,6 +60,21 @@ class GameEngine {
       }
     );
 
+    const btnResume = document.getElementById('btn-resume');
+    if (btnResume) {
+      btnResume.addEventListener('click', () => {
+        this.togglePause();
+      });
+    }
+
+    const btnReturnHangar = document.getElementById('btn-return-hangar');
+    if (btnReturnHangar) {
+      btnReturnHangar.addEventListener('click', () => {
+        this.togglePause();
+        this.returnToHangar();
+      });
+    }
+
     requestAnimationFrame((now) => this.loop(now));
   }
 
@@ -266,9 +281,9 @@ class GameEngine {
       const enemyIds = ch.enemyFleet || [2, 10, 11];
       enemyIds.forEach((id, idx) => {
         const data = SHIPS_DATA.find(s => s.id === id) || SHIPS_DATA[1];
-        const col = Math.floor(idx / 4);
-        const row = idx % 4;
-        const enemy = new Ship(data, 'red', CONFIG.MAP_WIDTH - 650 - col * 150, 350 + row * 220);
+        const col = Math.floor(idx / 3);
+        const row = idx % 3;
+        const enemy = new Ship(data, 'red', 1600 + col * 160, CONFIG.MAP_HEIGHT / 2 + (row - 1) * 180);
         enemy.damage = Math.round(enemy.damage * diff.enemyDmgMult);
         this.world.ships.push(enemy);
       });
