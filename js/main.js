@@ -139,6 +139,12 @@ class GameEngine {
       this.storyMission = null;
     }
 
+    if (this.gameMode !== 'survival') {
+      this.waveState = 'NONE';
+      this.currentWave = 1;
+      this.waveTimer = 0;
+    }
+
     window.CatnipMain = this;
     this.lockedTarget = null;
     this.fleetCommand = 'ATTACK';
@@ -489,6 +495,13 @@ class GameEngine {
         this.render();
       } catch (err) {
         console.error("Catnip Warships loop error:", err);
+      }
+    } else if (this.state === 'ENDGAME') {
+      // Continue rendering ocean background & particles during victory debriefing cutscenes!
+      try {
+        this.render();
+      } catch (err) {
+        console.error("Catnip Warships endgame render error:", err);
       }
     } else if (this.state === 'PAUSED') {
       if (InputHandler.consumePauseTrigger()) {
