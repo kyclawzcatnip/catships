@@ -226,6 +226,9 @@ class HangarUIClass {
 
   selectShip(shipId) {
     this.selectedShipId = shipId;
+    if (window.CatnipMain) {
+      window.CatnipMain.selectedShipId = shipId;
+    }
     const ship = SHIPS_DATA.find(s => s.id === shipId);
     if (!ship) return;
 
