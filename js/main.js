@@ -749,8 +749,8 @@ class GameEngine {
     }
     this.world.aircraft = this.world.aircraft.filter(a => a && !a.isDestroyed);
 
-    // 6. Wave Survival Spawner & Healing Logic
-    if (this.gameMode === 'survival' && this.playerShip && !this.playerShip.isDestroyed) {
+    // 6. Wave Survival Spawner & Healing Logic (STRICTLY ISOLATED TO SURVIVAL MODE ONLY)
+    if (this.gameMode === 'survival' && !this.isStoryMode && this.playerShip && !this.playerShip.isDestroyed) {
       const redAlive = this.world.ships.filter(s => s && s.team !== this.playerShip.team && !s.isDestroyed && s.hp > 0).length;
 
       if (redAlive === 0) {
