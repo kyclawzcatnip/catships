@@ -497,11 +497,12 @@ class GameEngine {
         console.error("Catnip Warships loop error:", err);
       }
     } else if (this.state === 'ENDGAME') {
-      // Continue rendering ocean background & particles during victory debriefing cutscenes!
+      // Continue updating ocean ripples, particles, floating text & camera during victory cutscenes!
       try {
+        this.updateEndGame(dt);
         this.render();
       } catch (err) {
-        console.error("Catnip Warships endgame render error:", err);
+        console.error("Catnip Warships endgame loop error:", err);
       }
     } else if (this.state === 'PAUSED') {
       if (InputHandler.consumePauseTrigger()) {
@@ -510,6 +511,29 @@ class GameEngine {
     }
 
     requestAnimationFrame((t) => this.loop(t));
+  }
+
+  updateEndGame(dt) {
+    if (this.world.map) {
+      this.world.map.update(dt, this.world);
+    }
+    const shipsCount = this.world.ships ? this.world.ships.length : 0;
+    for (let i = 0; i < shipsCount; i++) {
+      const ship = this.world.ships[i];
+      if (ship && !ship.isDestroyed) {
+        ship.vx *= 0.95;
+        ship.vy *= 0.95;
+        ship.x += ship.vx * dt;
+        ship.y += ship.vy * dt;
+      }
+    }
+    if (window.Renderer) {
+      Renderer.updateFX(dt);
+    }
+    const activeTarget = (this.isPilotingPlane && this.playerPlane) ? this.playerPlane : this.playerShip;
+    if (activeTarget && this.camera) {
+      this.camera.follow(activeTarget.x, activeTarget.y);
+    }
   }
 
   update(dt) {
