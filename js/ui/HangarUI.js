@@ -18,6 +18,7 @@ class HangarUIClass {
     this.bindEvents();
     this.renderShipGrid();
     this.selectShip(1);
+    this.updateLaunchButtonText();
     this.startPreviewAnimation();
   }
 

@@ -985,12 +985,14 @@ kbd {
 }
 
 .custom-fleet-counts {
+  display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  background: rgba(0, 229, 255, 0.08);
-  border: 1px dashed rgba(0, 229, 255, 0.3);
-  padding: 0.6rem;
+  background: rgba(0, 229, 255, 0.12);
+  border: 1px dashed rgba(0, 229, 255, 0.5);
+  padding: 0.75rem;
   border-radius: 8px;
+  margin-top: 0.5rem;
 }
 
 .count-group {
