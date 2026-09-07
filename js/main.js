@@ -415,17 +415,33 @@ class GameEngine {
     const label = dock.label || '';
 
     if (label.includes('Shipyard')) {
-      if (window.Renderer && this.playerShip) {
-        Renderer.addFloatingText(this.playerShip.x, this.playerShip.y - 45, '🏗️ ENTERING CATNIP SHIPYARD...', '#00e5ff');
-        Renderer.addParticleBurst(this.playerShip.x, this.playerShip.y, '#00e5ff', 25);
+      if (this.playerShip) {
+        this.playerShip.hp = this.playerShip.maxHp;
+        this.playerShip.saCooldownTimer = 0;
+        if (window.Renderer) {
+          Renderer.addFloatingText(this.playerShip.x, this.playerShip.y - 45, '🏗️ ENTERING CATNIP SHIPYARD...', '#00e5ff');
+          Renderer.addParticleBurst(this.playerShip.x, this.playerShip.y, '#00e5ff', 30);
+        }
       }
-      this.openShipyardModal();
+      const shipyardModal = document.getElementById('shipyard-dock-modal');
+      if (shipyardModal) {
+        shipyardModal.classList.remove('hidden');
+        this.openShipyardModal();
+      }
     } else if (label.includes('Salty Meow') || label.includes('Officer')) {
-      if (window.Renderer && this.playerShip) {
-        Renderer.addFloatingText(this.playerShip.x, this.playerShip.y - 45, '🐱 ENTERING "THE SALTY MEOW" OFFICER QUARTERS...', '#ffd700');
-        Renderer.addParticleBurst(this.playerShip.x, this.playerShip.y, '#ffd700', 25);
+      if (this.playerShip) {
+        this.playerShip.hp = this.playerShip.maxHp;
+        this.playerShip.saCooldownTimer = 0;
+        if (window.Renderer) {
+          Renderer.addFloatingText(this.playerShip.x, this.playerShip.y - 45, '🐱 ENTERING "THE SALTY MEOW" OFFICER QUARTERS...', '#ffd700');
+          Renderer.addParticleBurst(this.playerShip.x, this.playerShip.y, '#ffd700', 30);
+        }
       }
-      this.openSaltyMeowModal();
+      const saltymeowModal = document.getElementById('saltymeow-dock-modal');
+      if (saltymeowModal) {
+        saltymeowModal.classList.remove('hidden');
+        this.openSaltyMeowModal();
+      }
     } else if (label.includes('Harbor') || label.includes('Resupply')) {
       if (this.playerShip) {
         this.playerShip.hp = this.playerShip.maxHp;
