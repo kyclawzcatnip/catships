@@ -258,6 +258,57 @@ class HangarUIClass {
     const saName = document.getElementById('inspector-sa-name'); if (saName) saName.innerText = ship.saName;
     const saCd = document.getElementById('inspector-sa-cd'); if (saCd) saCd.innerText = `Cooldown: ${ship.saCd}s`;
     const saDesc = document.getElementById('inspector-sa-desc'); if (saDesc) saDesc.innerText = ship.saDesc;
+
+    this.renderCrewSlots(ship);
+  }
+
+  renderCrewSlots(ship) {
+    const container = document.getElementById('crew-slots-container');
+    const tag = document.getElementById('crew-slots-count');
+    if (!container || !ship) return;
+
+    const instance = this.previewShipInstance || new Ship(ship, 'blue', 0, 0);
+    const maxSlots = instance.maxCrewSlots || 2;
+    if (tag) tag.innerText = `${maxSlots} Officer Slots`;
+
+    // Retrieve saved crew selections for this ship ID or default
+    let savedCrew = [];
+    try {
+      const raw = localStorage.getItem(`catnip_crew_${ship.id}`);
+      if (raw) savedCrew = JSON.parse(raw);
+    } catch (e) {}
+
+    container.innerHTML = '';
+    const officers = window.CREW_OFFICERS || [];
+
+    for (let slotIdx = 0; slotIdx < maxSlots; slotIdx++) {
+      const row = document.createElement('div');
+      row.className = 'crew-slot-row';
+      
+      const defaultOfficer = officers[slotIdx % officers.length];
+      const selectedId = savedCrew[slotIdx] || defaultOfficer.id;
+
+      let optionsHtml = '';
+      officers.forEach(off => {
+        const isSel = (off.id === selectedId) ? 'selected' : '';
+        optionsHtml += `<option value="${off.id}" ${isSel}>${off.icon} ${off.name} (${off.description})</option>`;
+      });
+
+      row.innerHTML = `
+        <span style="font-size: 0.75rem; color: #ffd700; width: 50px;">Slot ${slotIdx + 1}:</span>
+        <select data-slot="${slotIdx}">${optionsHtml}</select>
+      `;
+
+      const selectEl = row.querySelector('select');
+      selectEl.addEventListener('change', () => {
+        const currentCrew = Array.from(container.querySelectorAll('select')).map(s => s.value);
+        try {
+          localStorage.setItem(`catnip_crew_${ship.id}`, JSON.stringify(currentCrew));
+        } catch (e) {}
+      });
+
+      container.appendChild(row);
+    }
   }
 
   updateLaunchButtonText() {

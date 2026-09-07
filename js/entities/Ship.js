@@ -42,6 +42,40 @@ class Ship {
     this.isSinking = false;
     this.sinkTimer = 0;
     this.sinkDuration = 4.5;
+
+    // Crew Capacity & Officer Assignments
+    const hpVal = this.data.hp || 200;
+    if (hpVal >= 550 || this.data.type === 'Carrier' || this.data.type === 'Submarine' || this.data.type === 'Dreadnought') {
+      this.maxCrewSlots = 4;
+    } else if (hpVal >= 350) {
+      this.maxCrewSlots = 3;
+    } else {
+      this.maxCrewSlots = 2;
+    }
+    this.crew = [];
+    this.crewStats = { saCdMult: 1.0, maxHpMult: 1.0, repairMult: 1.0, damageMult: 1.0, turnMult: 1.0, speedMult: 1.0, rangeMult: 1.0, jetMult: 1.0 };
+    this.morale = 50;
+    this.rescuedCount = 0;
+  }
+
+  applyCrew(officersList) {
+    if (!Array.isArray(officersList)) return;
+    this.crew = officersList.slice(0, this.maxCrewSlots);
+    this.crewStats = { saCdMult: 1.0, maxHpMult: 1.0, repairMult: 1.0, damageMult: 1.0, turnMult: 1.0, speedMult: 1.0, rangeMult: 1.0, jetMult: 1.0 };
+    
+    this.crew.forEach(off => {
+      if (!off || !off.stats) return;
+      for (let key in off.stats) {
+        if (typeof off.stats[key] === 'number') {
+          this.crewStats[key] *= off.stats[key];
+        }
+      }
+    });
+
+    if (this.crewStats.maxHpMult !== 1.0) {
+      this.maxHp = Math.round(this.data.hp * this.crewStats.maxHpMult);
+      this.hp = this.maxHp;
+    }
   }
 
   update(dt, world, inputHandler) {
@@ -111,10 +145,15 @@ class Ship {
       }
     }
 
+    // Morale Passive Decay & High Morale Reload Boost
+    this.morale = Math.max(0, (this.morale || 50) - 0.8 * dt);
+    const isHighMorale = (this.morale >= 75);
+    const reloadSpeedMult = (isHighMorale ? 1.15 : 1.0);
+
     // 1. Cooldown Timers
-    if (this.primaryReloadTimer > 0) this.primaryReloadTimer -= dt;
-    if (this.saCooldownTimer > 0) this.saCooldownTimer -= dt;
-    if (this.aaReloadTimer > 0) this.aaReloadTimer -= dt;
+    if (this.primaryReloadTimer > 0) this.primaryReloadTimer -= dt * reloadSpeedMult;
+    if (this.saCooldownTimer > 0) this.saCooldownTimer -= dt * reloadSpeedMult;
+    if (this.aaReloadTimer > 0) this.aaReloadTimer -= dt * reloadSpeedMult;
 
     if (this.moodTimer > 0) {
       this.moodTimer -= dt;

@@ -44,6 +44,21 @@ class HUDClass {
       spdNum.innerText = `${knots} Knots`;
     }
 
+    // 2b. Update Crew Morale Bar & High Morale Status
+    const moraleFill = document.getElementById('hud-morale-fill');
+    const moraleNum = document.getElementById('hud-morale-num');
+    if (moraleFill && moraleNum) {
+      const moraleVal = Math.round(playerShip.morale || 50);
+      moraleFill.style.width = `${moraleVal}%`;
+      if (moraleVal >= 75) {
+        moraleFill.style.background = 'linear-gradient(90deg, #ffd700, #39ff14)';
+        moraleNum.innerText = `⭐ HIGH MORALE ${moraleVal}% (+15% SPD/RELOAD)`;
+      } else {
+        moraleFill.style.background = 'linear-gradient(90deg, #ff9e00, #ffd700)';
+        moraleNum.innerText = `⭐ MORALE: ${moraleVal}%`;
+      }
+    }
+
     // 3. Update Ability Cooldown Ring Timer & Icon
     const cdText = document.getElementById('hud-ability-cd-text');
     const cdCircle = document.getElementById('hud-cd-circle');

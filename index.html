@@ -121,6 +121,17 @@
                 <p id="inspector-sa-desc">Slowly repairs the ship's HP for a short period.</p>
               </div>
 
+              <!-- CAT CREW STATIONS CARD -->
+              <div class="crew-card">
+                <div class="crew-header">
+                  <span>🐱 CAT OFFICERS CREW STATIONS</span>
+                  <span id="crew-slots-count" class="crew-slots-tag">2 / 2 Slots</span>
+                </div>
+                <div id="crew-slots-container" class="crew-slots-grid">
+                  <!-- Dynamic crew slots rendered by HangarUI.js -->
+                </div>
+              </div>
+
               <!-- BATTLE CUSTOMIZER PANEL (5 CUSTOMIZABLE SETTINGS) -->
               <div class="battle-customizer-card">
                 <div class="customizer-title">⚙️ CUSTOM BATTLE SETTINGS</div>
@@ -243,6 +254,13 @@
                 <div id="hud-spd-fill" class="hud-bar-fill spd" style="width: 50%;"></div>
               </div>
               <span id="hud-spd-num" class="hud-bar-text">18 Knots</span>
+            </div>
+            <div class="hud-bar-container">
+              <span class="hud-bar-label">MORALE</span>
+              <div class="hud-bar-track">
+                <div id="hud-morale-fill" class="hud-bar-fill morale" style="width: 50%; background: linear-gradient(90deg, #ffd700, #ff8500);"></div>
+              </div>
+              <span id="hud-morale-num" class="hud-bar-text">⭐ MORALE: 50%</span>
             </div>
           </div>
         </div>
@@ -396,6 +414,7 @@
   <!-- SCRIPTS MODULE LOAD ORDER -->
   <script src="js/config.js?v=2.9.4"></script>
   <script src="js/shipsData.js?v=2.9.4"></script>
+  <script src="js/crewData.js?v=2.9.4"></script>
   <script src="js/story/storyData.js?v=2.9.4"></script>
   <script src="js/abilities.js?v=2.9.4"></script>
   

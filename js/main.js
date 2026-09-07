@@ -211,6 +211,18 @@ class GameEngine {
       this.playerShip.baseReloadTime *= this.battleSettings.cooldownSpeed;
     }
 
+    // Apply Equipped Cat Officers from LocalStorage
+    try {
+      const rawCrew = localStorage.getItem(`catnip_crew_${shipId}`);
+      const officersList = window.CREW_OFFICERS || [];
+      let equippedOfficerIds = rawCrew ? JSON.parse(rawCrew) : [];
+      if (!Array.isArray(equippedOfficerIds) || equippedOfficerIds.length === 0) {
+        equippedOfficerIds = ['captain_whisker', 'chief_barnaby', 'gunner_claws', 'helmsman_paw'];
+      }
+      const equippedOfficers = equippedOfficerIds.map(id => officersList.find(o => o.id === id)).filter(Boolean);
+      this.playerShip.applyCrew(equippedOfficers);
+    } catch (e) {}
+
     document.getElementById('hud-player-ship-name').innerText = pData.name;
     document.getElementById('hud-type-badge').innerText = pData.type;
 
@@ -704,6 +716,18 @@ class GameEngine {
     for (let i = 0; i < shipsCount; i++) {
       for (let j = i + 1; j < shipsCount; j++) {
         PhysicsEngine.handleShipCollisions(this.world.ships[i], this.world.ships[j]);
+      }
+    }
+
+    // Catnip Alliance Rescue Floating Lifeboats (Dark Fleet IS EVIL & IGNORES LIFEBOATS)
+    if (this.world.lifeboats && this.world.lifeboats.length > 0) {
+      for (let i = 0; i < shipsCount; i++) {
+        const s = this.world.ships[i];
+        if (s && !s.isDestroyed && !s.isSinking && s.team === 'blue') {
+          for (let j = 0; j < this.world.lifeboats.length; j++) {
+            PhysicsEngine.handleLifeboatRescue(s, this.world.lifeboats[j], this.world);
+          }
+        }
       }
     }
 

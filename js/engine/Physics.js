@@ -7,8 +7,12 @@ class PhysicsEngine {
 
     // 1. Calculate Effective Speed & Acceleration based on ship's SP rating (1-10)
     let spRating = ship.data.sp;
-    let maxSpeed = spRating * CONFIG.BASE_SHIP_SPEED * (ship.speedMultiplier || 1.0);
-    let turnSpeed = CONFIG.BASE_TURN_SPEED * (1 + (10 - spRating) * 0.05);
+    const crewSpeed = (ship.crewStats && ship.crewStats.speedMult) ? ship.crewStats.speedMult : 1.0;
+    const crewTurn = (ship.crewStats && ship.crewStats.turnMult) ? ship.crewStats.turnMult : 1.0;
+    const moraleBoost = (ship.morale >= 75) ? 1.15 : 1.0;
+
+    let maxSpeed = spRating * CONFIG.BASE_SHIP_SPEED * (ship.speedMultiplier || 1.0) * crewSpeed * moraleBoost;
+    let turnSpeed = CONFIG.BASE_TURN_SPEED * (1 + (10 - spRating) * 0.05) * crewTurn * moraleBoost;
 
     // Apply Siege Mode restriction (0 speed if siege active)
     if (ship.buffs && ship.buffs.siege) {
@@ -110,6 +114,44 @@ class PhysicsEngine {
           shipA.takeDamage(ramDmg, shipB);
           shipB.takeDamage(ramDmg, shipA);
         }
+      }
+    }
+  }
+
+  /**
+   * Handle lifeboat rescues by Catnip Alliance ships (Dark Fleet IS EVIL and NEVER collects lifeboats!)
+   */
+  static handleLifeboatRescue(ship, lifeboat, world) {
+    if (!ship || !lifeboat || ship.isDestroyed || ship.isSinking || lifeboat.isDestroyed) return;
+
+    // EXCLUSIVE RULE: Dark Fleet (red team) IS EVIL and NEVER collects lifeboats!
+    // ONLY Catnip Alliance (blue team) rescues survivors!
+    if (ship.team !== 'blue') return;
+
+    const dx = lifeboat.x - ship.x;
+    const dy = lifeboat.y - ship.y;
+    const dist = Math.hypot(dx, dy);
+    const hitDist = (ship.length / 2.2) + 14;
+
+    if (dist < hitDist) {
+      lifeboat.isDestroyed = true;
+      ship.rescuedCount = (ship.rescuedCount || 0) + 1;
+
+      // Heal ship +50 HP
+      ship.hp = Math.min(ship.maxHp, ship.hp + 50);
+
+      // Boost Crew Morale +20%
+      ship.morale = Math.min(100, (ship.morale || 50) + 20);
+
+      // Award +25 Catnip Coins
+      if (world) {
+        world.coins = (world.coins || 0) + 25;
+      }
+
+      if (window.AudioSystem) AudioSystem.playPew();
+      if (window.Renderer) {
+        Renderer.addFloatingText(ship.x, ship.y - 50, '🐱 CAT SURVIVOR RESCUED (+50 HP, +25 COINS)!', '#39ff14');
+        Renderer.addParticleBurst(lifeboat.x, lifeboat.y, '#ffd700', 15);
       }
     }
   }
