@@ -49,6 +49,8 @@ class GameEngine {
     this.resizeCanvas();
     window.addEventListener('resize', () => this.resizeCanvas());
 
+    if (window.HUD) window.HUD.init();
+
     if (window.MainMenuUI) {
       MainMenuUI.init(
         () => this.enterHarborHub(),
@@ -56,9 +58,10 @@ class GameEngine {
           if (window.WikiUI) window.WikiUI.show('ships');
         },
         () => {
-          if (confirm('Return to main menu screen?')) {
-            this.returnToMainMenu();
-          }
+          try {
+            window.close();
+          } catch(e) {}
+          alert('🚪 Thank you for playing Catnip Warships! You can safely close this browser tab now.');
         }
       );
     }
@@ -99,6 +102,20 @@ class GameEngine {
     if (btnPauseGame) {
       btnPauseGame.addEventListener('click', () => {
         this.togglePause();
+      });
+    }
+
+    const btnHarborDeploy = document.getElementById('btn-harbor-deploy');
+    if (btnHarborDeploy) {
+      btnHarborDeploy.addEventListener('click', () => {
+        this.launchBattle(this.selectedShipId, this.battleSettings);
+      });
+    }
+
+    const btnHarborMainMenu = document.getElementById('btn-harbor-main-menu');
+    if (btnHarborMainMenu) {
+      btnHarborMainMenu.addEventListener('click', () => {
+        this.returnToMainMenu();
       });
     }
 
@@ -146,6 +163,12 @@ class GameEngine {
     if (window.MainMenuUI) MainMenuUI.hide();
     document.getElementById('hangar-screen').classList.remove('active');
     document.getElementById('battle-screen').classList.add('active');
+    
+    const hubHeader = document.getElementById('harbor-hub-header');
+    const battleScore = document.getElementById('battle-score-box');
+    if (hubHeader) hubHeader.classList.remove('hidden');
+    if (battleScore) battleScore.classList.add('hidden');
+
     this.resizeCanvas();
 
     // Setup World & Map for Harbor Basin
@@ -286,6 +309,12 @@ class GameEngine {
     // Switch Screens & Resize Canvas Buffer
     document.getElementById('hangar-screen').classList.remove('active');
     document.getElementById('battle-screen').classList.add('active');
+    
+    const hubHeader = document.getElementById('harbor-hub-header');
+    const battleScore = document.getElementById('battle-score-box');
+    if (hubHeader) hubHeader.classList.add('hidden');
+    if (battleScore) battleScore.classList.remove('hidden');
+
     this.resizeCanvas();
 
     // Strip focus from any active HTML input/select box so WASD keys reach the game engine

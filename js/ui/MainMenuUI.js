@@ -22,7 +22,14 @@ class MainMenuUI {
 
     if (this.btnQuit) {
       this.btnQuit.addEventListener('click', () => {
-        if (onQuit) onQuit();
+        if (onQuit) {
+          onQuit();
+        } else {
+          try {
+            window.close();
+          } catch(e) {}
+          alert('🚪 Thank you for playing Catnip Warships! You can now close this browser tab.');
+        }
       });
     }
   }

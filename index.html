@@ -310,8 +310,23 @@
           </div>
         </div>
 
+        <!-- HARBOR HUB HEADER (Active only during HARBOR_HUB state) -->
+        <div id="harbor-hub-header" class="hud-box harbor-hub-box hidden" style="display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; background: rgba(10, 15, 30, 0.9); border: 2px solid #00e5ff; border-radius: 12px; padding: 0.6rem 1.25rem;">
+          <div class="harbor-title" style="display: flex; align-items: center; gap: 0.75rem;">
+            <span class="icon" style="font-size: 1.6rem;">⚓</span>
+            <div>
+              <h3 style="color: #00e5ff; font-family: var(--font-heading); font-size: 1.05rem; margin: 0;">CATNIP HARBOR BASIN HUB</h3>
+              <p style="color: #a0aec0; font-size: 0.78rem; margin: 2px 0 0 0;">Peaceful Base Port • Sail to Docks to Customizer / Manage Officers</p>
+            </div>
+          </div>
+          <div class="harbor-header-actions" style="display: flex; gap: 0.5rem;">
+            <button id="btn-harbor-deploy" class="btn btn-primary btn-mini" style="font-weight: 800;">🌊 DEPLOY TO COMBAT</button>
+            <button id="btn-harbor-main-menu" class="btn btn-secondary btn-mini">🏠 MAIN MENU</button>
+          </div>
+        </div>
+
         <!-- TOP CENTER: BATTLE SCORE & OBJECTIVE -->
-        <div class="hud-box battle-score-box">
+        <div id="battle-score-box" class="hud-box battle-score-box">
           <div class="score-team blue-team">
             <span class="team-label">CATNIP FLEET</span>
             <span id="blue-score" class="score-num">5</span>
