@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=2.9.2">
+  <link rel="stylesheet" href="css/style.css?v=3.0.1">
 </head>
 <body>
   <div id="app">
@@ -21,16 +21,16 @@
         <div class="menu-header">
           <span class="logo-icon-large">🐾⚓</span>
           <h1>CATNIP WARSHIPS</h1>
-          <p class="subtitle">Naval Fleet Action & Catnip Harbor Hub <span class="version-badge-inline">v3.0.0</span></p>
+          <p class="subtitle">Naval Fleet Action & Catnip Harbor Hub <span class="version-badge-inline">v3.0.1</span></p>
         </div>
         <div class="main-menu-buttons">
-          <button id="btn-main-play" class="btn btn-primary btn-large">
+          <button id="btn-main-play" class="btn btn-primary btn-large" onclick="if(window.CatnipMain) window.CatnipMain.enterHarborHub();">
             <span class="icon">🎮</span> PLAY (Enter Harbor Hub)
           </button>
-          <button id="btn-main-wiki" class="btn btn-secondary btn-large">
+          <button id="btn-main-wiki" class="btn btn-secondary btn-large" onclick="if(window.WikiUI) window.WikiUI.show('ships');">
             <span class="icon">📖</span> GO TO WIKI (Field Manual)
           </button>
-          <button id="btn-main-quit" class="btn btn-secondary btn-large btn-danger-subtle">
+          <button id="btn-main-quit" class="btn btn-secondary btn-large btn-danger-subtle" onclick="alert('🚪 Thank you for playing Catnip Warships! You can safely close this browser tab now.');">
             <span class="icon">🚪</span> QUIT
           </button>
         </div>

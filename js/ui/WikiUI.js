@@ -27,7 +27,9 @@ class WikiUI {
   }
 
   static show(tab = 'ships') {
+    if (!this.modal) this.modal = document.getElementById('wiki-modal');
     if (this.modal) {
+      this.modal.style.display = 'flex';
       this.modal.classList.remove('hidden');
       this.modal.classList.add('active');
       this.switchTab(tab);
@@ -35,7 +37,9 @@ class WikiUI {
   }
 
   static hide() {
+    if (!this.modal) this.modal = document.getElementById('wiki-modal');
     if (this.modal) {
+      this.modal.style.display = 'none';
       this.modal.classList.remove('active');
       this.modal.classList.add('hidden');
     }

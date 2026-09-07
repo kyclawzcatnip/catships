@@ -36,12 +36,14 @@ class MainMenuUI {
 
   static show() {
     if (this.screen) {
+      this.screen.style.display = 'flex';
       this.screen.classList.add('active');
     }
   }
 
   static hide() {
     if (this.screen) {
+      this.screen.style.display = 'none';
       this.screen.classList.remove('active');
     }
   }
