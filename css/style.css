@@ -1518,3 +1518,8 @@ kbd {
   50% { transform: translate(-50%, -6px); }
 }
 
+.harbor-hub-box {
+  pointer-events: auto !important;
+  z-index: 90;
+}
+
