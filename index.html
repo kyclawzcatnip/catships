@@ -24,13 +24,13 @@
           <p class="subtitle">Naval Fleet Action & Catnip Harbor Hub <span class="version-badge-inline">v3.0.1</span></p>
         </div>
         <div class="main-menu-buttons">
-          <button id="btn-main-play-hangar" class="btn btn-primary btn-large" onclick="if(window.CatnipMain) window.CatnipMain.openHangarScreen();">
+          <button id="btn-main-play-hangar" class="btn btn-primary btn-large" onclick="(window.CatnipMain || getGameEngine()).openHangarScreen();">
             <span class="icon">🎮</span> PLAY (Fleet Hangar & HQ)
           </button>
-          <button id="btn-main-play-harbor" class="btn btn-secondary btn-large" onclick="if(window.CatnipMain) window.CatnipMain.enterHarborHub();">
+          <button id="btn-main-play-harbor" class="btn btn-secondary btn-large" onclick="(window.CatnipMain || getGameEngine()).enterHarborHub();">
             <span class="icon">⛵</span> ENTER PLAYABLE HARBOR HUB MAP
           </button>
-          <button id="btn-main-wiki" class="btn btn-secondary btn-large" onclick="if(window.WikiUI) window.WikiUI.show('ships');">
+          <button id="btn-main-wiki" class="btn btn-secondary btn-large" onclick="WikiUI.show('ships');">
             <span class="icon">📖</span> GO TO WIKI (Field Manual)
           </button>
           <button id="btn-main-quit" class="btn btn-secondary btn-large btn-danger-subtle" onclick="alert('🚪 Thank you for playing Catnip Warships! You can safely close this browser tab now.');">

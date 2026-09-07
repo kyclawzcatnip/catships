@@ -12,18 +12,16 @@ class MainMenuUI {
     if (this.btnPlayHangar) {
       this.btnPlayHangar.onclick = (e) => {
         if (e) e.stopPropagation();
-        if (window.CatnipMain) {
-          window.CatnipMain.openHangarScreen();
-        }
+        const game = window.CatnipMain || (typeof getGameEngine === 'function' ? getGameEngine() : null);
+        if (game) game.openHangarScreen();
       };
     }
 
     if (this.btnPlayHarbor) {
       this.btnPlayHarbor.onclick = (e) => {
         if (e) e.stopPropagation();
-        if (window.CatnipMain) {
-          window.CatnipMain.enterHarborHub();
-        }
+        const game = window.CatnipMain || (typeof getGameEngine === 'function' ? getGameEngine() : null);
+        if (game) game.enterHarborHub();
       };
     }
 

@@ -1324,11 +1324,17 @@ class GameEngine {
 }
 
 // Fail-safe Game Engine Bootstrapper with Dynamic Version Auto-Sync
-function bootGameEngine() {
+function getGameEngine() {
   if (!window.Game) {
     window.Game = new GameEngine();
   }
   window.CatnipMain = window.Game;
+  return window.CatnipMain;
+}
+window.getGameEngine = getGameEngine;
+
+function bootGameEngine() {
+  getGameEngine();
   const verTag = document.querySelector('.version-tag');
   if (verTag && typeof CONFIG !== 'undefined' && CONFIG.VERSION) {
     verTag.innerText = `⚡ ${CONFIG.VERSION} — 📖 Story Campaign Edition`;
