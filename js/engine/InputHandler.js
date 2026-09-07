@@ -221,6 +221,11 @@ class InputHandlerClass {
     }
     return false;
   }
+
+  isKeyPressed(code) {
+    if (!code) return false;
+    return !!(this.keys[code] || this.keys[code.toLowerCase()] || this.keys[code.toUpperCase()]);
+  }
 }
 
 const InputHandler = new InputHandlerClass();

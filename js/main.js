@@ -822,8 +822,7 @@ class GameEngine {
         promptEl.innerHTML = `<span>${nearDock.icon} ${nearDock.label}</span> — Click or Press <b>[E]</b> to Enter`;
         promptEl.onclick = () => this.handleDockInteraction(nearDock);
 
-        if (InputHandler.isKeyPressed('KeyE')) {
-          InputHandler.keys['KeyE'] = false;
+        if (InputHandler.consumeAbilityTrigger() || (InputHandler.isKeyPressed && InputHandler.isKeyPressed('KeyE'))) {
           this.handleDockInteraction(nearDock);
         }
       } else {
