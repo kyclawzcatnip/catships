@@ -1313,3 +1313,204 @@ kbd {
   color: #fff;
   line-height: 1.4;
 }
+
+/* ==========================================
+   MAIN MENU SCREEN & WIKI MODAL
+   ========================================== */
+#main-menu-screen {
+  background: radial-gradient(circle at center, rgba(13, 27, 62, 0.95) 0%, rgba(5, 10, 24, 0.98) 100%),
+              url('https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  z-index: 100;
+}
+
+.main-menu-card {
+  background: rgba(10, 15, 30, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 2px solid rgba(0, 229, 255, 0.4);
+  box-shadow: 0 0 50px rgba(0, 229, 255, 0.25), inset 0 0 30px rgba(0, 229, 255, 0.05);
+  border-radius: 20px;
+  padding: 3rem 4rem;
+  text-align: center;
+  max-width: 540px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.main-menu-card .logo-icon-large {
+  font-size: 4.5rem;
+  filter: drop-shadow(0 0 15px rgba(0, 229, 255, 0.8));
+  animation: pulse-glow 3s infinite alternate ease-in-out;
+}
+
+.main-menu-card h1 {
+  font-family: var(--font-heading);
+  font-size: 2.8rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, #ffffff 0%, #00e5ff 60%, #ffd700 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-top: 0.5rem;
+}
+
+.main-menu-card .subtitle {
+  color: #a0aec0;
+  font-size: 0.95rem;
+  margin-top: 0.3rem;
+}
+
+.main-menu-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.btn-large {
+  padding: 1.1rem 1.8rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-large:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 229, 255, 0.4);
+}
+
+.btn-danger-subtle {
+  border-color: rgba(255, 71, 87, 0.4);
+  color: #ff4757;
+}
+
+.btn-danger-subtle:hover {
+  background: rgba(255, 71, 87, 0.2);
+  box-shadow: 0 8px 25px rgba(255, 71, 87, 0.3);
+}
+
+.menu-footer {
+  font-size: 0.8rem;
+  color: #718096;
+}
+
+/* WIKI MODAL */
+.wiki-modal-card {
+  max-width: 760px;
+  width: 90%;
+  background: rgba(10, 15, 30, 0.95);
+  border: 2px solid #00e5ff;
+  border-radius: 16px;
+  box-shadow: 0 0 40px rgba(0, 229, 255, 0.3);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-height: 85vh;
+  overflow: hidden;
+}
+
+.wiki-nav-tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.75rem;
+  overflow-x: auto;
+}
+
+.wiki-tab-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #a0aec0;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.wiki-tab-btn.active, .wiki-tab-btn:hover {
+  background: rgba(0, 229, 255, 0.2);
+  border-color: #00e5ff;
+  color: #00e5ff;
+}
+
+.wiki-content-area {
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  flex: 1;
+}
+
+.wiki-tab-content {
+  display: none;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.wiki-tab-content.active {
+  display: flex;
+}
+
+.wiki-tab-content h3 {
+  color: #ffd700;
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+}
+
+.wiki-tab-content p, .wiki-tab-content li {
+  color: #e2e8f0;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.wiki-tab-content ul {
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* HARBOR PROMPT OVERLAY */
+#harbor-hud-prompt {
+  position: absolute;
+  bottom: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(10, 15, 30, 0.92);
+  border: 2px solid #ffd700;
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
+  border-radius: 30px;
+  padding: 0.75rem 1.75rem;
+  color: #fff;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 80;
+  animation: bounce-prompt 2s infinite ease-in-out;
+}
+
+@keyframes bounce-prompt {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, -6px); }
+}
+

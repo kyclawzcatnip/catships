@@ -12,6 +12,8 @@ class HarborDock {
     this.reloadTimer = 0;
     this.fireCooldown = 1.2;
     this.isDestroyed = false;
+    this.label = config.label || 'Catnip Harbor Slip';
+    this.icon = config.icon || '⚓';
   }
 
   update(dt, world) {
@@ -126,6 +128,16 @@ class HarborDock {
     ctx.rotate(this.turretAngle);
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, -3, 24, 6);
+    ctx.rotate(-this.turretAngle);
+
+    // 5. Floating Label Title Badge above Dock
+    ctx.font = 'bold 14px "Space Grotesk", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = '#000';
+    ctx.shadowBlur = 6;
+    ctx.fillText(`${this.icon} ${this.label}`, 0, -this.dockRadius - 12);
+    ctx.shadowBlur = 0;
 
     ctx.restore();
   }

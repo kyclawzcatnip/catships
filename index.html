@@ -15,8 +15,33 @@
 </head>
 <body>
   <div id="app">
-    <!-- HANGAR / SHIP SELECTION MENU -->
-    <div id="hangar-screen" class="screen active">
+    <!-- MAIN MENU SCREEN -->
+    <div id="main-menu-screen" class="screen active">
+      <div class="main-menu-card">
+        <div class="menu-header">
+          <span class="logo-icon-large">🐾⚓</span>
+          <h1>CATNIP WARSHIPS</h1>
+          <p class="subtitle">Naval Fleet Action & Catnip Harbor Hub <span class="version-badge-inline">v3.0.0</span></p>
+        </div>
+        <div class="main-menu-buttons">
+          <button id="btn-main-play" class="btn btn-primary btn-large">
+            <span class="icon">🎮</span> PLAY (Enter Harbor Hub)
+          </button>
+          <button id="btn-main-wiki" class="btn btn-secondary btn-large">
+            <span class="icon">📖</span> GO TO WIKI (Field Manual)
+          </button>
+          <button id="btn-main-quit" class="btn btn-secondary btn-large btn-danger-subtle">
+            <span class="icon">🚪</span> QUIT
+          </button>
+        </div>
+        <div class="menu-footer">
+          <p>Catnip Alliance Navy • Shipyard • Coastal Basin • "The Salty Meow" Officer Quarters</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- HANGAR / SHIP SELECTION MENU (Opens via Shipyard Dock or Launch) -->
+    <div id="hangar-screen" class="screen">
       <header class="hangar-header">
         <div class="logo-container">
           <span class="logo-icon">🐾⚓</span>
@@ -428,39 +453,109 @@
     </div>
   </div>
 
+  <!-- CATNIP WARSHIPS WIKI & FIELD MANUAL MODAL -->
+  <div id="wiki-modal" class="modal-backdrop hidden">
+    <div class="modal-card wiki-modal-card">
+      <div class="modal-header">
+        <h2>📖 CATNIP WARSHIPS FIELD MANUAL & WIKI</h2>
+        <button id="btn-close-wiki" class="btn-close">&times;</button>
+      </div>
+      <div class="wiki-nav-tabs">
+        <button class="wiki-tab-btn active" data-tab="ships">🚢 Ship Roster (100)</button>
+        <button class="wiki-tab-btn" data-tab="officers">🐱 Cat Officers</button>
+        <button class="wiki-tab-btn" data-tab="shipyard">🎨 Shipyard & Turrets</button>
+        <button class="wiki-tab-btn" data-tab="harbor">⚓ Harbor Basin & Defenses</button>
+      </div>
+      
+      <div class="wiki-content-area">
+        <!-- TAB 1: SHIPS -->
+        <div id="wiki-tab-ships" class="wiki-tab-content active">
+          <h3>🚢 Complete 100-Ship Warship Fleet</h3>
+          <p>The Catnip Alliance operates 100 specialized naval combat vessels across 4 tactical roles:</p>
+          <ul>
+            <li><strong>🗡️ Attackers</strong>: High DPS combatants equipped with heavy catnip cannons & torpedo salvos.</li>
+            <li><strong>🛡️ Tanks</strong>: Massive dreadnoughts and armor-plated hulls capable of soaking immense damage.</li>
+            <li><strong>⚡ Rushers</strong>: High-speed interceptors with boosted turn response and rapid-fire guns.</li>
+            <li><strong>🎯 Long Ranged</strong>: Siege cruisers, snipers, and aircraft carriers delivering long-distance air/missile strikes.</li>
+          </ul>
+        </div>
+        
+        <!-- TAB 2: OFFICERS -->
+        <div id="wiki-tab-officers" class="wiki-tab-content">
+          <h3>🐱 "The Salty Meow" Officer Quarters & Tavern</h3>
+          <p>Recruit elite Cat Officers at the coastal tavern and assign them to ship crew stations:</p>
+          <ul>
+            <li><strong>🧑‍✈️ Captain Whisker</strong>: Faster ability cooldowns (-15% per level).</li>
+            <li><strong>🔧 Chief Barnaby</strong>: Bonus max HP and faster repair rate.</li>
+            <li><strong>🎯 Officer Claws</strong>: Boosted cannon accuracy & critical hit damage.</li>
+            <li><strong>☸️ Helmsman Paw</strong>: Enhanced maneuverability, turn speed, and acceleration.</li>
+            <li><strong>📡 Scout Purr</strong>: Increased vision range and target lock speed.</li>
+            <li><strong>✈️ Marshal Mittens</strong>: Boosted fighter jet flight speed & strafing power.</li>
+          </ul>
+        </div>
+
+        <!-- TAB 3: SHIPYARD -->
+        <div id="wiki-tab-shipyard" class="wiki-tab-content">
+          <h3>🎨 Catnip Shipyard & Customization</h3>
+          <p>Modify your fleet with custom paint schemes and specialized turret hardware:</p>
+          <ul>
+            <li><strong>Golden Cat Paint</strong>: Shimmering gold hull finish (1,000 Coins).</li>
+            <li><strong>Cyber Neon Paint</strong>: Dark carbon hull with vibrant neon glow (2,500 Coins).</li>
+            <li><strong>Heavy Siege Turrets</strong>: Maximum damage per shell with armor penetration.</li>
+            <li><strong>Quad Rapid Flak</strong>: High fire-rate dual/quad cannons built for aerial defense.</li>
+          </ul>
+        </div>
+
+        <!-- TAB 4: HARBOR -->
+        <div id="wiki-tab-harbor" class="wiki-tab-content">
+          <h3>⚓ Coastal Basin & Harbor Infrastructure</h3>
+          <p>The Catnip Harbor provides vital mid-battle support and strategic harbor features:</p>
+          <ul>
+            <li><strong>Docking Slip Repair</strong>: Restores +15 HP/sec while docked inside the harbor slip.</li>
+            <li><strong>Coastal Flak Battery</strong>: Automated 100mm coastal turret firing explosive flak at enemy invaders.</li>
+            <li><strong>Resupply Station</strong>: Instant cooldown speedup (1.5x) for ability recharge.</li>
+            <li><strong>Lifeboat Morale System</strong>: Rescue floating survivors for +50 HP, +25 Coins, and High Morale speed boosts!</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Version Tag (Bottom-Left) -->
-  <div class="version-tag">⚡ v2.9.4 — 📖 50v50 Armada Final Battle Edition</div>
+  <div class="version-tag">⚡ v3.0.0 — ⚓ Playable Harbor Basin & Main Menu Edition</div>
 
   <!-- SCRIPTS MODULE LOAD ORDER -->
-  <script src="js/config.js?v=2.9.4"></script>
-  <script src="js/shipsData.js?v=2.9.4"></script>
-  <script src="js/crewData.js?v=2.9.4"></script>
-  <script src="js/shipyardData.js?v=2.9.4"></script>
-  <script src="js/story/storyData.js?v=2.9.4"></script>
-  <script src="js/abilities.js?v=2.9.4"></script>
+  <script src="js/config.js?v=3.0.0"></script>
+  <script src="js/shipsData.js?v=3.0.0"></script>
+  <script src="js/crewData.js?v=3.0.0"></script>
+  <script src="js/shipyardData.js?v=3.0.0"></script>
+  <script src="js/story/storyData.js?v=3.0.0"></script>
+  <script src="js/abilities.js?v=3.0.0"></script>
   
-  <script src="js/engine/Vector2D.js?v=2.9.4"></script>
-  <script src="js/engine/AudioSystem.js?v=2.9.4"></script>
-  <script src="js/engine/InputHandler.js?v=2.9.4"></script>
-  <script src="js/engine/Camera.js?v=2.9.4"></script>
-  <script src="js/engine/Map.js?v=2.9.4"></script>
-  <script src="js/engine/Physics.js?v=2.9.4"></script>
-  <script src="js/engine/Renderer.js?v=2.9.4"></script>
+  <script src="js/engine/Vector2D.js?v=3.0.0"></script>
+  <script src="js/engine/AudioSystem.js?v=3.0.0"></script>
+  <script src="js/engine/InputHandler.js?v=3.0.0"></script>
+  <script src="js/engine/Camera.js?v=3.0.0"></script>
+  <script src="js/engine/Map.js?v=3.0.0"></script>
+  <script src="js/engine/Physics.js?v=3.0.0"></script>
+  <script src="js/engine/Renderer.js?v=3.0.0"></script>
   
-  <script src="js/entities/Particle.js?v=2.9.4"></script>
-  <script src="js/entities/Projectile.js?v=2.9.4"></script>
-  <script src="js/entities/Aircraft.js?v=2.9.4"></script>
-  <script src="js/entities/Lifeboat.js?v=2.9.4"></script>
-  <script src="js/entities/HarborDock.js?v=2.9.4"></script>
-  <script src="js/entities/Ship.js?v=2.9.4"></script>
+  <script src="js/entities/Particle.js?v=3.0.0"></script>
+  <script src="js/entities/Projectile.js?v=3.0.0"></script>
+  <script src="js/entities/Aircraft.js?v=3.0.0"></script>
+  <script src="js/entities/Lifeboat.js?v=3.0.0"></script>
+  <script src="js/entities/HarborDock.js?v=3.0.0"></script>
+  <script src="js/entities/Ship.js?v=3.0.0"></script>
   
-  <script src="js/ai/FleetAI.js?v=2.9.4"></script>
-  <script src="js/ui/HangarUI.js?v=2.9.4"></script>
-  <script src="js/ui/HUD.js?v=2.9.4"></script>
-  <script src="js/ui/Minimap.js?v=2.9.4"></script>
-  <script src="js/ui/EndGameUI.js?v=2.9.4"></script>
-  <script src="js/story/StoryMode.js?v=2.9.4"></script>
+  <script src="js/ai/FleetAI.js?v=3.0.0"></script>
+  <script src="js/ui/MainMenuUI.js?v=3.0.0"></script>
+  <script src="js/ui/WikiUI.js?v=3.0.0"></script>
+  <script src="js/ui/HangarUI.js?v=3.0.0"></script>
+  <script src="js/ui/HUD.js?v=3.0.0"></script>
+  <script src="js/ui/Minimap.js?v=3.0.0"></script>
+  <script src="js/ui/EndGameUI.js?v=3.0.0"></script>
+  <script src="js/story/StoryMode.js?v=3.0.0"></script>
   
-  <script src="js/main.js?v=2.9.4"></script>
+  <script src="js/main.js?v=3.0.0"></script>
 </body>
 </html>

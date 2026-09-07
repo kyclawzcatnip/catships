@@ -7,7 +7,7 @@ class GameEngine {
     this.canvas = document.getElementById('game-canvas');
     this.ctx = this.canvas.getContext('2d');
 
-    this.state = 'HANGAR'; // 'HANGAR', 'BATTLE', 'PAUSED', 'ENDGAME'
+    this.state = 'MAIN_MENU'; // 'MAIN_MENU', 'HARBOR_HUB', 'HANGAR', 'BATTLE', 'PAUSED', 'ENDGAME'
     this.selectedShipId = 1;
     this.difficultyKey = 'easy';
     this.gameMode = 'skirmish';
@@ -49,6 +49,24 @@ class GameEngine {
     this.resizeCanvas();
     window.addEventListener('resize', () => this.resizeCanvas());
 
+    if (window.MainMenuUI) {
+      MainMenuUI.init(
+        () => this.enterHarborHub(),
+        () => {
+          if (window.WikiUI) window.WikiUI.show('ships');
+        },
+        () => {
+          if (confirm('Return to main menu screen?')) {
+            this.returnToMainMenu();
+          }
+        }
+      );
+    }
+
+    if (window.WikiUI) {
+      WikiUI.init();
+    }
+
     HangarUI.init((shipId, settings) => {
       this.launchBattle(shipId, settings);
     });
@@ -58,7 +76,7 @@ class GameEngine {
         this.launchBattle(this.selectedShipId, this.battleSettings);
       },
       () => {
-        this.returnToHangar();
+        this.enterHarborHub();
       }
     );
 
@@ -73,7 +91,7 @@ class GameEngine {
     if (btnReturnHangar) {
       btnReturnHangar.addEventListener('click', () => {
         this.togglePause();
-        this.returnToHangar();
+        this.enterHarborHub();
       });
     }
 
@@ -88,11 +106,14 @@ class GameEngine {
     if (pilotBtn) {
       pilotBtn.style.cursor = 'pointer';
       pilotBtn.addEventListener('click', () => {
-        if (this.state === 'BATTLE') {
+        if (this.state === 'BATTLE' || this.state === 'HARBOR_HUB') {
           this.togglePlanePiloting();
         }
       });
     }
+
+    // Default startup state: MAIN_MENU
+    this.returnToMainMenu();
 
     requestAnimationFrame((now) => this.loop(now));
   }
@@ -103,20 +124,110 @@ class GameEngine {
     this.camera.resize(this.canvas.width, this.canvas.height);
   }
 
-  returnToHangar() {
-    this.state = 'HANGAR';
+  returnToMainMenu() {
+    this.state = 'MAIN_MENU';
     this.isPilotingPlane = false;
     this.playerPlane = null;
     this.isEndingMatch = false;
 
-    EndGameUI.hide();
-    const pauseModal = document.getElementById('pause-modal');
-    if (pauseModal) pauseModal.classList.remove('active');
-
+    if (window.MainMenuUI) MainMenuUI.show();
+    document.getElementById('hangar-screen').classList.remove('active');
     document.getElementById('battle-screen').classList.remove('active');
-    document.getElementById('hangar-screen').classList.add('active');
+    const promptEl = document.getElementById('harbor-hud-prompt');
+    if (promptEl) promptEl.style.display = 'none';
+  }
 
-    HangarUI.startPreviewAnimation();
+  enterHarborHub() {
+    this.state = 'HARBOR_HUB';
+    this.isPilotingPlane = false;
+    this.playerPlane = null;
+    this.isEndingMatch = false;
+
+    if (window.MainMenuUI) MainMenuUI.hide();
+    document.getElementById('hangar-screen').classList.remove('active');
+    document.getElementById('battle-screen').classList.add('active');
+    this.resizeCanvas();
+
+    // Setup World & Map for Harbor Basin
+    this.world.map = new MapEngine('tropical');
+    this.world.ships = [];
+    this.world.projectiles = [];
+    this.world.aircraft = [];
+    this.world.lifeboats = [];
+    this.world.docks = [];
+    this.world.addProjectile = (p) => this.world.projectiles.push(p);
+    this.world.addAircraft = (a) => this.world.aircraft.push(a);
+    this.world.addLifeboat = (l) => this.world.lifeboats.push(l);
+    this.world.findNearestEnemy = () => null;
+
+    // Create Player Ship at central Harbor Basin slip
+    const pData = SHIPS_DATA.find(s => Number(s.id) === Number(this.selectedShipId)) || SHIPS_DATA[0];
+    this.playerShip = new Ship(pData, 'blue', 1500, 1400);
+    this.playerShip.isPlayer = true;
+    this.playerShip.hp = this.playerShip.maxHp;
+
+    // Apply Shipyard Paint
+    try {
+      const savedPaintId = localStorage.getItem(`catnip_paint_${this.selectedShipId}`);
+      if (savedPaintId && window.SHIPYARD_PAINTS) {
+        const paintObj = window.SHIPYARD_PAINTS.find(p => p.id === savedPaintId);
+        if (paintObj) this.playerShip.paintObj = paintObj;
+      }
+    } catch (e) {}
+
+    this.world.ships.push(this.playerShip);
+    this.world.playerShip = this.playerShip;
+
+    // Add 3 Physical Harbor Districts
+    if (window.HarborDock) {
+      // 1. Catnip Shipyard (North Pier)
+      this.world.docks.push(new HarborDock({
+        x: 1200, y: 1000, team: 'blue', label: 'Catnip Shipyard', icon: '🏗️'
+      }));
+      // 2. Harbor Basin Resupply (Central Basin)
+      this.world.docks.push(new HarborDock({
+        x: 1500, y: 1400, team: 'blue', label: 'Harbor Basin Resupply', icon: '⚓'
+      }));
+      // 3. "The Salty Meow" Officer Quarters (South Coastal Tavern)
+      this.world.docks.push(new HarborDock({
+        x: 1800, y: 1200, team: 'blue', label: '"The Salty Meow" Officer Quarters', icon: '🐱'
+      }));
+    }
+
+    // Camera Follow
+    const targetCamX = this.playerShip.x - this.camera.viewportWidth / 2;
+    const targetCamY = this.playerShip.y - this.camera.viewportHeight / 2;
+    this.camera.x = Math.max(0, Math.min(CONFIG.MAP_WIDTH - this.camera.viewportWidth, targetCamX));
+    this.camera.y = Math.max(0, Math.min(CONFIG.MAP_HEIGHT - this.camera.viewportHeight, targetCamY));
+
+    if (window.Renderer) {
+      Renderer.addFloatingText(this.playerShip.x, this.playerShip.y - 50, '⚓ WELCOME TO CATNIP HARBOR BASIN HUB!', '#00e5ff');
+    }
+  }
+
+  handleDockInteraction(dock) {
+    if (!dock) return;
+    const label = dock.label || '';
+    if (label.includes('Shipyard')) {
+      document.getElementById('hangar-screen').classList.add('active');
+      HangarUI.renderShipyardCustomizer(this.playerShip);
+    } else if (label.includes('Salty Meow') || label.includes('Officer')) {
+      document.getElementById('hangar-screen').classList.add('active');
+      HangarUI.renderCrewStations(this.playerShip);
+    } else if (label.includes('Harbor') || label.includes('Resupply')) {
+      if (this.playerShip) {
+        this.playerShip.hp = this.playerShip.maxHp;
+        this.playerShip.saCooldownTimer = 0;
+        if (window.Renderer) {
+          Renderer.addFloatingText(this.playerShip.x, this.playerShip.y - 45, '⚓ HARBOR BASIN RESUPPLY COMPLETE! (+100% HP & AMMO)', '#00f5d4');
+          Renderer.addParticleBurst(this.playerShip.x, this.playerShip.y, '#00f5d4', 30);
+        }
+      }
+    }
+  }
+
+  returnToHangar() {
+    this.enterHarborHub();
   }
 
   launchBattle(shipId, settings) {
@@ -558,7 +669,7 @@ class GameEngine {
     const dt = Math.min(0.033, Math.max(0.001, (now - this.lastTime) / 1000));
     this.lastTime = now;
 
-    if (this.state === 'BATTLE') {
+    if (this.state === 'BATTLE' || this.state === 'HARBOR_HUB') {
       try {
         this.update(dt);
         this.render();
@@ -606,9 +717,56 @@ class GameEngine {
   }
 
   update(dt) {
-    // 0. Update Map Environmental Effects (Caldera Volcano & Volcanic Meteor Warnings)
+    // 0. Update Map Environmental Effects
     if (this.world.map) {
       this.world.map.update(dt, this.world);
+    }
+
+    // Interactive Harbor Hub Handling
+    if (this.state === 'HARBOR_HUB') {
+      let nearDock = null;
+      if (this.world.docks && this.playerShip) {
+        this.world.docks.forEach(dock => {
+          const dist = Math.hypot(this.playerShip.x - dock.x, this.playerShip.y - dock.y);
+          if (dist < dock.dockRadius + 50) {
+            nearDock = dock;
+          }
+        });
+      }
+
+      let promptEl = document.getElementById('harbor-hud-prompt');
+      if (!promptEl) {
+        promptEl = document.createElement('div');
+        promptEl.id = 'harbor-hud-prompt';
+        document.getElementById('app').appendChild(promptEl);
+      }
+
+      if (nearDock) {
+        promptEl.style.display = 'flex';
+        promptEl.innerHTML = `<span>${nearDock.icon} ${nearDock.label}</span> — Click or Press <b>[E]</b> to Enter`;
+        promptEl.onclick = () => this.handleDockInteraction(nearDock);
+
+        if (InputHandler.isKeyPressed('KeyE')) {
+          InputHandler.keys['KeyE'] = false;
+          this.handleDockInteraction(nearDock);
+        }
+      } else {
+        promptEl.style.display = 'none';
+      }
+
+      // Check if player sails past Harbor Exit Buoy Gate to launch fleet battle
+      if (this.playerShip) {
+        if (this.playerShip.x < 300 || this.playerShip.x > 3700 || this.playerShip.y < 300 || this.playerShip.y > 3700) {
+          if (window.Renderer) {
+            Renderer.addFloatingText(this.playerShip.x, this.playerShip.y - 60, '🌊 DEPLOYING TO OPEN SEA COMBAT!', '#ffd700');
+          }
+          this.launchBattle(this.selectedShipId, this.battleSettings);
+          return;
+        }
+      }
+    } else {
+      const promptEl = document.getElementById('harbor-hud-prompt');
+      if (promptEl) promptEl.style.display = 'none';
     }
 
     // 1. ESC key pause check
