@@ -1,7 +1,7 @@
 /**
  * Catnip Warships — Cat Officer Crew Data Registry
  */
-const CREW_OFFICERS = [
+window.CREW_OFFICERS = [
   {
     id: 'captain_whisker',
     name: 'Captain Whisker',
@@ -58,6 +58,4 @@ const CREW_OFFICERS = [
   }
 ];
 
-if (typeof window !== 'undefined') {
-  window.CREW_OFFICERS = CREW_OFFICERS;
-}
+var CREW_OFFICERS = window.CREW_OFFICERS;

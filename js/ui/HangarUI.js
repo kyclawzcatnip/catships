@@ -279,14 +279,21 @@ class HangarUIClass {
     } catch (e) {}
 
     container.innerHTML = '';
-    const officers = window.CREW_OFFICERS || [];
+    const officers = (typeof window !== 'undefined' && window.CREW_OFFICERS && window.CREW_OFFICERS.length > 0)
+      ? window.CREW_OFFICERS
+      : ((typeof CREW_OFFICERS !== 'undefined' && Array.isArray(CREW_OFFICERS)) ? CREW_OFFICERS : []);
+
+    if (!officers || officers.length === 0) {
+      container.innerHTML = '<div style="color: #ffd700; font-size: 0.78rem;">Loading Cat Officers...</div>';
+      return;
+    }
 
     for (let slotIdx = 0; slotIdx < maxSlots; slotIdx++) {
       const row = document.createElement('div');
       row.className = 'crew-slot-row';
       
-      const defaultOfficer = officers[slotIdx % officers.length];
-      const selectedId = savedCrew[slotIdx] || defaultOfficer.id;
+      const defaultOfficer = officers[slotIdx % officers.length] || officers[0];
+      const selectedId = (savedCrew && savedCrew[slotIdx]) ? savedCrew[slotIdx] : defaultOfficer.id;
 
       let optionsHtml = '';
       officers.forEach(off => {
