@@ -36,6 +36,8 @@ class InputHandlerClass {
       const kCode = e.code || '';
       const kKey = (e.key || '').toUpperCase();
 
+      if (e.repeat) return;
+
       if (kCode === 'KeyP' || kKey === 'P') {
         this.pilotPlaneTriggered = true;
       }

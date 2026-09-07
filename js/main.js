@@ -75,6 +75,23 @@ class GameEngine {
       });
     }
 
+    const btnPauseGame = document.getElementById('btn-pause-game');
+    if (btnPauseGame) {
+      btnPauseGame.addEventListener('click', () => {
+        this.togglePause();
+      });
+    }
+
+    const pilotBtn = document.getElementById('pilot-plane-btn');
+    if (pilotBtn) {
+      pilotBtn.style.cursor = 'pointer';
+      pilotBtn.addEventListener('click', () => {
+        if (this.state === 'BATTLE') {
+          this.togglePlanePiloting();
+        }
+      });
+    }
+
     requestAnimationFrame((now) => this.loop(now));
   }
 
@@ -444,7 +461,7 @@ class GameEngine {
         Renderer.addFloatingText(this.playerShip.x, this.playerShip.y - 45, '⚓ CAPTAIN RETURNED TO WARSHIP!', '#00e5ff');
       }
     } else {
-      let jet = this.world.aircraft.find(a => a.team === (this.playerShip ? this.playerShip.team : 'blue') && !a.isDestroyed);
+      let jet = this.world.aircraft.find(a => a && a.team === (this.playerShip ? this.playerShip.team : 'blue') && !a.isDestroyed);
       if (!jet) {
         jet = new Aircraft({
           owner: this.playerShip,
@@ -460,10 +477,18 @@ class GameEngine {
       }
       this.playerPlane = jet;
       this.playerPlane.isPlayerControlled = true;
+      this.playerPlane.lifeTimer = 9999;
       this.isPilotingPlane = true;
 
+      // Position jet at captain's ship position when taking off
+      if (this.playerShip) {
+        this.playerPlane.x = this.playerShip.x;
+        this.playerPlane.y = this.playerShip.y;
+        this.playerPlane.rotation = this.playerShip.rotation;
+      }
+
       if (window.Renderer) {
-        Renderer.addFloatingText(this.playerPlane.x, this.playerPlane.y - 40, '✈️ PILOTING CAT FIGHTER JET! (Press Key P to Exit)', '#ffd700');
+        Renderer.addFloatingText(this.playerPlane.x, this.playerPlane.y - 40, '✈️ PILOTING CAT FIGHTER JET! (Press P or Click HUD to Exit)', '#ffd700');
       }
     }
   }
