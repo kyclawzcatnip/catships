@@ -148,8 +148,16 @@ class GameEngine {
     this.isEndingMatch = false;
 
     if (window.MainMenuUI) MainMenuUI.show();
-    document.getElementById('hangar-screen').classList.remove('active');
-    document.getElementById('battle-screen').classList.remove('active');
+    const hangarScreen = document.getElementById('hangar-screen');
+    const battleScreen = document.getElementById('battle-screen');
+    if (hangarScreen) {
+      hangarScreen.style.display = 'none';
+      hangarScreen.classList.remove('active');
+    }
+    if (battleScreen) {
+      battleScreen.style.display = 'none';
+      battleScreen.classList.remove('active');
+    }
     const promptEl = document.getElementById('harbor-hud-prompt');
     if (promptEl) promptEl.style.display = 'none';
   }
@@ -161,8 +169,16 @@ class GameEngine {
     this.isEndingMatch = false;
 
     if (window.MainMenuUI) MainMenuUI.hide();
-    document.getElementById('battle-screen').classList.remove('active');
-    document.getElementById('hangar-screen').classList.add('active');
+    const hangarScreen = document.getElementById('hangar-screen');
+    const battleScreen = document.getElementById('battle-screen');
+    if (battleScreen) {
+      battleScreen.style.display = 'none';
+      battleScreen.classList.remove('active');
+    }
+    if (hangarScreen) {
+      hangarScreen.style.display = 'flex';
+      hangarScreen.classList.add('active');
+    }
     const promptEl = document.getElementById('harbor-hud-prompt');
     if (promptEl) promptEl.style.display = 'none';
 
@@ -176,8 +192,16 @@ class GameEngine {
     this.isEndingMatch = false;
 
     if (window.MainMenuUI) MainMenuUI.hide();
-    document.getElementById('hangar-screen').classList.remove('active');
-    document.getElementById('battle-screen').classList.add('active');
+    const hangarScreen = document.getElementById('hangar-screen');
+    const battleScreen = document.getElementById('battle-screen');
+    if (hangarScreen) {
+      hangarScreen.style.display = 'none';
+      hangarScreen.classList.remove('active');
+    }
+    if (battleScreen) {
+      battleScreen.style.display = 'flex';
+      battleScreen.classList.add('active');
+    }
     
     const hubHeader = document.getElementById('harbor-hub-header');
     const battleScore = document.getElementById('battle-score-box');
@@ -322,8 +346,16 @@ class GameEngine {
     const diff = CONFIG.DIFFICULTY[this.difficultyKey] || CONFIG.DIFFICULTY.easy;
 
     // Switch Screens & Resize Canvas Buffer
-    document.getElementById('hangar-screen').classList.remove('active');
-    document.getElementById('battle-screen').classList.add('active');
+    const hangarScreen = document.getElementById('hangar-screen');
+    const battleScreen = document.getElementById('battle-screen');
+    if (hangarScreen) {
+      hangarScreen.style.display = 'none';
+      hangarScreen.classList.remove('active');
+    }
+    if (battleScreen) {
+      battleScreen.style.display = 'flex';
+      battleScreen.classList.add('active');
+    }
     
     const hubHeader = document.getElementById('harbor-hub-header');
     const battleScore = document.getElementById('battle-score-box');
