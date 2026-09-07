@@ -24,7 +24,7 @@
           <p class="subtitle">Naval Fleet Action & Catnip Harbor Hub <span class="version-badge-inline">v3.0.1</span></p>
         </div>
         <div class="main-menu-buttons">
-          <button id="btn-main-play" class="btn btn-primary btn-large" onclick="if(window.CatnipMain) window.CatnipMain.enterHarborHub();">
+          <button id="btn-main-play" class="btn btn-primary btn-large" onclick="if(window.MainMenuUI && window.MainMenuUI.onPlay) { window.MainMenuUI.onPlay(); } else if(window.CatnipMain) { window.CatnipMain.enterHarborHub(); }">
             <span class="icon">🎮</span> PLAY (Enter Harbor Hub)
           </button>
           <button id="btn-main-wiki" class="btn btn-secondary btn-large" onclick="if(window.WikiUI) window.WikiUI.show('ships');">

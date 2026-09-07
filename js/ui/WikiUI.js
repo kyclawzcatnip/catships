@@ -9,25 +9,27 @@ class WikiUI {
     this.tabContents = document.querySelectorAll('.wiki-tab-content');
 
     if (this.btnClose) {
-      this.btnClose.addEventListener('click', () => this.hide());
+      this.btnClose.onclick = () => this.hide();
     }
 
     if (this.modal) {
-      this.modal.addEventListener('click', (e) => {
+      this.modal.onclick = (e) => {
         if (e.target === this.modal) this.hide();
-      });
+      };
     }
 
-    this.tabBtns.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const tabKey = btn.getAttribute('data-tab');
-        this.switchTab(tabKey);
+    if (this.tabBtns) {
+      this.tabBtns.forEach((btn) => {
+        btn.onclick = () => {
+          const tabKey = btn.getAttribute('data-tab');
+          this.switchTab(tabKey);
+        };
       });
-    });
+    }
   }
 
   static show(tab = 'ships') {
-    if (!this.modal) this.modal = document.getElementById('wiki-modal');
+    this.init();
     if (this.modal) {
       this.modal.style.display = 'flex';
       this.modal.classList.remove('hidden');
@@ -46,12 +48,31 @@ class WikiUI {
   }
 
   static switchTab(tabKey) {
-    this.tabBtns.forEach((btn) => {
-      btn.classList.toggle('active', btn.getAttribute('data-tab') === tabKey);
-    });
-    this.tabContents.forEach((content) => {
-      content.classList.toggle('active', content.id === `wiki-tab-${tabKey}`);
-    });
+    if (!this.tabBtns || this.tabBtns.length === 0) {
+      this.tabBtns = document.querySelectorAll('.wiki-tab-btn');
+    }
+    if (!this.tabContents || this.tabContents.length === 0) {
+      this.tabContents = document.querySelectorAll('.wiki-tab-content');
+    }
+
+    if (this.tabBtns) {
+      this.tabBtns.forEach((btn) => {
+        btn.classList.toggle('active', btn.getAttribute('data-tab') === tabKey);
+      });
+    }
+    if (this.tabContents) {
+      this.tabContents.forEach((content) => {
+        content.classList.toggle('active', content.id === `wiki-tab-${tabKey}`);
+      });
+    }
   }
 }
 window.WikiUI = WikiUI;
+
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => WikiUI.init());
+  } else {
+    WikiUI.init();
+  }
+}
