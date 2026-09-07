@@ -19,12 +19,20 @@ class HarborDock {
   update(dt, world) {
     if (this.isDestroyed || !world) return;
 
+    this.isPlayerNear = false;
+    if (world.playerShip) {
+      const distToPlayer = Math.hypot(world.playerShip.x - this.x, world.playerShip.y - this.y);
+      if (distToPlayer < this.dockRadius + 120) {
+        this.isPlayerNear = true;
+      }
+    }
+
     // 1. Safe Haven Docking Repair & Cooldown Assist for Friendly Blue Ships inside Dock Slip!
     if (world.ships) {
       world.ships.forEach(ship => {
         if (ship && !ship.isDestroyed && !ship.isSinking && ship.team === this.team) {
           const dist = Math.hypot(ship.x - this.x, ship.y - this.y);
-          if (dist < this.dockRadius) {
+          if (dist < this.dockRadius + 40) {
             // Repair +15 HP/sec
             ship.hp = Math.min(ship.maxHp, ship.hp + 15 * dt);
 
@@ -93,15 +101,24 @@ class HarborDock {
     ctx.translate(screenX, screenY);
 
     // 1. Docking Slip Harbor Water Ring
-    ctx.strokeStyle = 'rgba(0, 229, 255, 0.45)';
-    ctx.fillStyle = 'rgba(0, 229, 255, 0.08)';
-    ctx.lineWidth = 2;
+    if (this.isPlayerNear) {
+      ctx.strokeStyle = '#00f5d4';
+      ctx.fillStyle = 'rgba(0, 245, 212, 0.22)';
+      ctx.lineWidth = 4;
+      ctx.shadowColor = '#00f5d4';
+      ctx.shadowBlur = 15;
+    } else {
+      ctx.strokeStyle = 'rgba(0, 229, 255, 0.45)';
+      ctx.fillStyle = 'rgba(0, 229, 255, 0.08)';
+      ctx.lineWidth = 2;
+    }
     ctx.setLineDash([8, 6]);
     ctx.beginPath();
-    ctx.arc(0, 0, this.dockRadius, 0, Math.PI * 2);
+    ctx.arc(0, 0, this.dockRadius + (this.isPlayerNear ? 10 : 0), 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
     ctx.setLineDash([]);
+    ctx.shadowBlur = 0;
 
     // 2. Wooden Pier Slips
     ctx.fillStyle = '#8d5b4c';
@@ -116,8 +133,8 @@ class HarborDock {
     ctx.strokeRect(-15, -60, 30, 120);
 
     // 3. Central Harbor Lighthouse & Battery Tower
-    ctx.fillStyle = '#00e5ff';
-    ctx.shadowColor = '#00e5ff';
+    ctx.fillStyle = this.isPlayerNear ? '#00f5d4' : '#00e5ff';
+    ctx.shadowColor = this.isPlayerNear ? '#00f5d4' : '#00e5ff';
     ctx.shadowBlur = 15;
     ctx.beginPath();
     ctx.arc(0, 0, 16, 0, Math.PI * 2);
@@ -131,12 +148,18 @@ class HarborDock {
     ctx.rotate(-this.turretAngle);
 
     // 5. Floating Label Title Badge above Dock
-    ctx.font = 'bold 14px "Space Grotesk", sans-serif';
+    ctx.font = 'bold 15px "Space Grotesk", sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = this.isPlayerNear ? '#00f5d4' : '#ffffff';
     ctx.shadowColor = '#000';
-    ctx.shadowBlur = 6;
-    ctx.fillText(`${this.icon} ${this.label}`, 0, -this.dockRadius - 12);
+    ctx.shadowBlur = 8;
+    ctx.fillText(`${this.icon} ${this.label}`, 0, -this.dockRadius - 16);
+    
+    if (this.isPlayerNear) {
+      ctx.font = '900 13px "Outfit", sans-serif';
+      ctx.fillStyle = '#ffd700';
+      ctx.fillText('👉 PRESS [E] OR CLICK TO ENTER DOCK', 0, -this.dockRadius - 36);
+    }
     ctx.shadowBlur = 0;
 
     ctx.restore();

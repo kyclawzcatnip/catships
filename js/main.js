@@ -958,20 +958,42 @@ class GameEngine {
       if (this.world.docks && this.playerShip) {
         this.world.docks.forEach(dock => {
           const dist = Math.hypot(this.playerShip.x - dock.x, this.playerShip.y - dock.y);
-          if (dist < dock.dockRadius + 60) {
+          if (dist < dock.dockRadius + 120) {
             nearDock = dock;
           }
         });
       }
 
-      let promptEl = document.getElementById('harbor-hud-prompt');
-      if (!promptEl) {
-        promptEl = document.createElement('div');
-        promptEl.id = 'harbor-hud-prompt';
-        document.getElementById('app').appendChild(promptEl);
+      const shipyardModal = document.getElementById('shipyard-dock-modal');
+      const saltymeowModal = document.getElementById('saltymeow-dock-modal');
+      const resupplyModal = document.getElementById('harbor-resupply-modal');
+      const isAnyModalOpen = (shipyardModal && !shipyardModal.classList.contains('hidden')) ||
+                             (saltymeowModal && !saltymeowModal.classList.contains('hidden')) ||
+                             (resupplyModal && !resupplyModal.classList.contains('hidden'));
+
+      const ePressed = InputHandler.consumeAbilityTrigger() ||
+                        (InputHandler.isKeyPressed && (InputHandler.isKeyPressed('KeyE') || InputHandler.isKeyPressed('e') || InputHandler.isKeyPressed('E')));
+
+      if (ePressed && InputHandler.keys) {
+        InputHandler.keys['KeyE'] = false;
+        InputHandler.keys['e'] = false;
+        InputHandler.keys['E'] = false;
       }
 
-      if (nearDock) {
+      if (isAnyModalOpen) {
+        if (ePressed || InputHandler.consumePauseTrigger()) {
+          if (shipyardModal) shipyardModal.classList.add('hidden');
+          if (saltymeowModal) saltymeowModal.classList.add('hidden');
+          if (resupplyModal) resupplyModal.classList.add('hidden');
+        }
+      } else if (nearDock) {
+        let promptEl = document.getElementById('harbor-hud-prompt');
+        if (!promptEl) {
+          promptEl = document.createElement('div');
+          promptEl.id = 'harbor-hud-prompt';
+          document.getElementById('app').appendChild(promptEl);
+        }
+
         promptEl.style.display = 'flex';
         promptEl.innerHTML = `<span>${nearDock.icon} ${nearDock.label}</span> — Click or Press <b>[E]</b> to Enter`;
         promptEl.onclick = (e) => {
@@ -979,7 +1001,7 @@ class GameEngine {
           this.handleDockInteraction(nearDock);
         };
 
-        if (InputHandler.consumeAbilityTrigger()) {
+        if (ePressed) {
           this.handleDockInteraction(nearDock);
         }
 
@@ -987,13 +1009,14 @@ class GameEngine {
         if (InputHandler.mouse.isDown && InputHandler.mouse.hasMoved) {
           InputHandler.updateWorldMouse(this.camera);
           const distToMouse = Math.hypot(InputHandler.mouse.worldX - nearDock.x, InputHandler.mouse.worldY - nearDock.y);
-          if (distToMouse < nearDock.dockRadius + 20) {
+          if (distToMouse < nearDock.dockRadius + 50) {
             InputHandler.mouse.isDown = false;
             this.handleDockInteraction(nearDock);
           }
         }
       } else {
-        promptEl.style.display = 'none';
+        const promptEl = document.getElementById('harbor-hud-prompt');
+        if (promptEl) promptEl.style.display = 'none';
       }
 
       // Check if player sails past Harbor Exit Buoy Gate to launch fleet battle

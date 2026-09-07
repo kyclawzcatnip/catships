@@ -41,7 +41,7 @@ class InputHandlerClass {
       if (kCode === 'KeyP' || kKey === 'P') {
         this.pilotPlaneTriggered = true;
       }
-      if (kCode === 'KeyE' || kKey === 'E' || e.shiftKey || kCode.startsWith('Shift')) {
+      if (kCode === 'KeyE' || kKey === 'E' || kKey === 'e') {
         this.abilityTriggered = true;
       }
       if (kCode === 'Space' || kKey === ' ') {
@@ -146,7 +146,7 @@ class InputHandlerClass {
   }
 
   isAimRight() {
-    return this.keys['KeyL'] || this.keys['KeyE'];
+    return !!(this.keys['KeyL'] || this.keys['l'] || this.keys['L']);
   }
 
   consumeLockTargetTrigger() {
