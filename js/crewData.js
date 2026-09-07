@@ -1,5 +1,5 @@
 /**
- * Catnip Warships — Cat Officer Crew Data Registry
+ * Catnip Warships — Cat Officer Crew Data Registry & Leveling System
  */
 window.CREW_OFFICERS = [
   {
@@ -57,5 +57,31 @@ window.CREW_OFFICERS = [
     stats: { jetMult: 1.25 }
   }
 ];
+
+window.getOfficerLevel = function(officerId) {
+  try {
+    const raw = localStorage.getItem(`catnip_officer_lvl_${officerId}`);
+    return raw ? Math.min(5, Math.max(1, parseInt(raw))) : 1;
+  } catch (e) {
+    return 1;
+  }
+};
+
+window.getOfficerLevelStats = function(officer) {
+  if (!officer || !officer.stats) return officer;
+  const lvl = window.getOfficerLevel(officer.id);
+  const lvlMult = 1.0 + (lvl - 1) * 0.15; // +15% power scaling per level!
+
+  const scaledStats = {};
+  for (let k in officer.stats) {
+    if (k === 'saCdMult') {
+      scaledStats[k] = 1.0 - ((1.0 - officer.stats[k]) * lvlMult);
+    } else {
+      scaledStats[k] = 1.0 + ((officer.stats[k] - 1.0) * lvlMult);
+    }
+  }
+
+  return { ...officer, level: lvl, stats: scaledStats };
+};
 
 var CREW_OFFICERS = window.CREW_OFFICERS;

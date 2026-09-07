@@ -221,9 +221,15 @@ class RendererEngine {
       ctx.fill();
     } else {
       // Standard Warship Hull Drawing
-      ctx.fillStyle = ship.data.color;
-      ctx.strokeStyle = ship.data.isDark ? '#240046' : '#ffffff';
+      const hullColor = (ship.paintObj && ship.paintObj.color) || ship.paintColor || ship.data.color;
+      ctx.fillStyle = hullColor;
+      ctx.strokeStyle = (ship.paintObj && ship.paintObj.glow) ? ship.paintObj.glow : (ship.data.isDark ? '#240046' : '#ffffff');
       ctx.lineWidth = 2;
+
+      if (ship.paintObj && ship.paintObj.glow) {
+        ctx.shadowColor = ship.paintObj.glow;
+        ctx.shadowBlur = 10;
+      }
 
       ctx.beginPath();
       ctx.moveTo(halfL, 0); // Bow tip

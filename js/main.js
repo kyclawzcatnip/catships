@@ -191,6 +191,7 @@ class GameEngine {
     this.world.projectiles = [];
     this.world.aircraft = [];
     this.world.lifeboats = [];
+    this.world.docks = [];
     this.world.addProjectile = (p) => this.world.projectiles.push(p);
     this.world.addAircraft = (a) => this.world.aircraft.push(a);
     this.world.addLifeboat = (l) => this.world.lifeboats.push(l);
@@ -225,6 +226,24 @@ class GameEngine {
       this.playerShip.applyCrew(equippedOfficers);
     } catch (e) {}
 
+    // Apply Shipyard Customizations (Paint & Turret Modules)
+    try {
+      const savedPaintId = localStorage.getItem(`catnip_paint_${shipId}`);
+      if (savedPaintId && window.SHIPYARD_PAINTS) {
+        const paintObj = window.SHIPYARD_PAINTS.find(p => p.id === savedPaintId);
+        if (paintObj) this.playerShip.paintObj = paintObj;
+      }
+      const savedTurretId = localStorage.getItem(`catnip_turret_${shipId}`);
+      if (savedTurretId && window.TURRET_MODULES) {
+        const turretObj = window.TURRET_MODULES.find(t => t.id === savedTurretId);
+        if (turretObj) {
+          this.playerShip.turretModule = turretObj;
+          this.playerShip.damage = Math.round(this.playerShip.damage * turretObj.damageMult);
+          this.playerShip.baseReloadTime *= turretObj.reloadMult;
+        }
+      }
+    } catch (e) {}
+
     document.getElementById('hud-player-ship-name').innerText = pData.name;
     document.getElementById('hud-type-badge').innerText = pData.type;
 
@@ -242,6 +261,15 @@ class GameEngine {
 
     // Setup Fleet Roster according to Battle Type & Fleet Size
     this.setupFleetForMode(this.battleSettings, diff);
+
+    // Spawn Friendly Harbor Dock near Base Port
+    if (window.HarborDock) {
+      this.world.docks.push(new HarborDock({
+        x: playerSpawnX - 220,
+        y: (CONFIG.MAP_HEIGHT / 2) - 220,
+        team: playerTeam
+      }));
+    }
   }
 
   launchStoryMission(ch) {
@@ -837,6 +865,11 @@ class GameEngine {
       this.world.lifeboats = this.world.lifeboats.filter(b => b && !b.isDestroyed);
     }
 
+    // 5b-2. Update Harbor Docks
+    if (this.world.docks) {
+      this.world.docks.forEach(d => d.update(dt, this.world));
+    }
+
     // 5c. Playable Lifeboat Re-Boarding Ally Warship Routine
     if (this.isPilotingLifeboat && this.playerLifeboat && !this.playerLifeboat.isDestroyed) {
       const allyShips = this.world.ships.filter(s => s && s.team === 'blue' && !s.isDestroyed && !s.isSinking);
@@ -934,7 +967,12 @@ class GameEngine {
     this.ctx.shadowBlur = 0;
     if (this.ctx.setLineDash) this.ctx.setLineDash([]);
 
-    // 1b. Draw Lifeboats floating on ocean
+    // 1b. Draw Harbor Docks
+    if (this.world.docks) {
+      this.world.docks.forEach(d => d.draw(this.ctx, this.camera));
+    }
+
+    // 1c. Draw Lifeboats floating on ocean
     if (this.world.lifeboats) {
       for (let i = 0; i < this.world.lifeboats.length; i++) {
         const boat = this.world.lifeboats[i];

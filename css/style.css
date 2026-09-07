@@ -507,6 +507,33 @@ select:focus {
   font-size: 0.78rem;
 }
 
+.shipyard-card {
+  background: rgba(0, 229, 255, 0.06);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  border-radius: 10px;
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.shipyard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #00e5ff;
+}
+
+.coins-tag {
+  font-size: 0.72rem;
+  background: rgba(0, 229, 255, 0.2);
+  color: #00e5ff;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
 .inspector-actions {
   margin-top: auto;
 }

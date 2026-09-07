@@ -260,6 +260,71 @@ class HangarUIClass {
     const saDesc = document.getElementById('inspector-sa-desc'); if (saDesc) saDesc.innerText = ship.saDesc;
 
     this.renderCrewSlots(ship);
+    this.renderShipyardCustomizer(ship);
+  }
+
+  renderShipyardCustomizer(ship) {
+    const paintSelect = document.getElementById('select-ship-paint');
+    const turretSelect = document.getElementById('select-turret-module');
+    const coinsTag = document.getElementById('shipyard-coins-tag');
+    if (!ship) return;
+
+    if (coinsTag) {
+      let coins = 500;
+      try {
+        const rawCoins = localStorage.getItem('catnip_coins');
+        if (rawCoins !== null) coins = parseInt(rawCoins);
+      } catch (e) {}
+      coinsTag.innerText = `🪙 ${coins} Coins`;
+    }
+
+    if (paintSelect) {
+      const paints = window.SHIPYARD_PAINTS || [];
+      let savedPaint = 'default';
+      try {
+        savedPaint = localStorage.getItem(`catnip_paint_${ship.id}`) || 'default';
+      } catch (e) {}
+
+      let html = '';
+      paints.forEach(p => {
+        const isSel = (p.id === savedPaint) ? 'selected' : '';
+        html += `<option value="${p.id}" ${isSel}>${p.icon} ${p.name}</option>`;
+      });
+      paintSelect.innerHTML = html;
+
+      paintSelect.onchange = (e) => {
+        const val = e.target.value;
+        try {
+          localStorage.setItem(`catnip_paint_${ship.id}`, val);
+        } catch (e) {}
+        if (this.previewShipInstance) {
+          const paintObj = paints.find(p => p.id === val);
+          this.previewShipInstance.paintObj = paintObj;
+        }
+      };
+    }
+
+    if (turretSelect) {
+      const turrets = window.TURRET_MODULES || [];
+      let savedTurret = 'standard';
+      try {
+        savedTurret = localStorage.getItem(`catnip_turret_${ship.id}`) || 'standard';
+      } catch (e) {}
+
+      let html = '';
+      turrets.forEach(t => {
+        const isSel = (t.id === savedTurret) ? 'selected' : '';
+        html += `<option value="${t.id}" ${isSel}>${t.icon} ${t.name} (${t.description})</option>`;
+      });
+      turretSelect.innerHTML = html;
+
+      turretSelect.onchange = (e) => {
+        const val = e.target.value;
+        try {
+          localStorage.setItem(`catnip_turret_${ship.id}`, val);
+        } catch (e) {}
+      };
+    }
   }
 
   renderCrewSlots(ship) {
