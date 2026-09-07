@@ -435,21 +435,47 @@ class Ship {
       Renderer.addFloatingText(this.x, this.y - 45, '💥 WARSHIP SINKING! MAYDAY!', '#ff3366');
     }
 
-    // Spawn 2 to 4 Lifeboats with cat survivors! 🚣🐱
+    // Spawn 3 to 5 Lifeboats with cat survivors! 🚣🐱
     const targetWorld = world || (window.CatnipMain ? window.CatnipMain.world : (window.Game ? window.Game.world : null));
     if (targetWorld) {
       if (!targetWorld.lifeboats) targetWorld.lifeboats = [];
       const boatCount = 3 + Math.floor(Math.random() * 3);
+      let playerBoat = null;
+
       for (let i = 0; i < boatCount; i++) {
         const spreadAngle = (i / boatCount) * Math.PI * 2 + Math.random() * 0.5;
         const speed = 40 + Math.random() * 45;
-        targetWorld.lifeboats.push(new Lifeboat({
+        const isPlayerFlagship = (this.isPlayer && i === 0);
+
+        const boat = new Lifeboat({
           x: this.x + (Math.random() - 0.5) * 30,
           y: this.y + (Math.random() - 0.5) * 30,
           vx: Math.cos(spreadAngle) * speed,
           vy: Math.sin(spreadAngle) * speed,
-          team: this.team
-        }));
+          team: this.team,
+          isPlayerControlled: isPlayerFlagship,
+          isFollower: (this.isPlayer && !isPlayerFlagship),
+          targetLeader: playerBoat
+        });
+
+        if (isPlayerFlagship) {
+          playerBoat = boat;
+        } else if (playerBoat) {
+          boat.targetLeader = playerBoat;
+        }
+
+        targetWorld.lifeboats.push(boat);
+      }
+
+      if (this.isPlayer && playerBoat) {
+        const app = window.CatnipMain || window.Game;
+        if (app) {
+          app.playerLifeboat = playerBoat;
+          app.isPilotingLifeboat = true;
+        }
+        if (window.Renderer) {
+          Renderer.addFloatingText(playerBoat.x, playerBoat.y - 45, '🚣 SHIP SUNK! CAPTAIN CONTROLLING LIFEBOAT!', '#ffd700');
+        }
       }
     }
   }

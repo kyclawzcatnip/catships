@@ -30,7 +30,9 @@ class GameEngine {
 
     this.playerShip = null;
     this.playerPlane = null;
+    this.playerLifeboat = null;
     this.isPilotingPlane = false;
+    this.isPilotingLifeboat = false;
     this.lockedTarget = null;
     this.fleetCommand = 'ATTACK';
     this.isEndingMatch = false;
@@ -829,10 +831,44 @@ class GameEngine {
       for (let i = 0; i < this.world.lifeboats.length; i++) {
         const boat = this.world.lifeboats[i];
         if (boat && !boat.isDestroyed) {
-          boat.update(dt);
+          boat.update(dt, this.world, InputHandler);
         }
       }
       this.world.lifeboats = this.world.lifeboats.filter(b => b && !b.isDestroyed);
+    }
+
+    // 5c. Playable Lifeboat Re-Boarding Ally Warship Routine
+    if (this.isPilotingLifeboat && this.playerLifeboat && !this.playerLifeboat.isDestroyed) {
+      const allyShips = this.world.ships.filter(s => s && s.team === 'blue' && !s.isDestroyed && !s.isSinking);
+      for (let i = 0; i < allyShips.length; i++) {
+        const ally = allyShips[i];
+        if (Math.hypot(ally.x - this.playerLifeboat.x, ally.y - this.playerLifeboat.y) < (ally.length / 2 + 20)) {
+          // Re-board Ally Ship!
+          if (this.playerShip) this.playerShip.isPlayer = false;
+          ally.isPlayer = true;
+          this.playerShip = ally;
+          this.world.playerShip = ally;
+          this.isPilotingLifeboat = false;
+
+          // Heal Ally Ship & Surge Morale
+          ally.hp = Math.min(ally.maxHp, ally.hp + 100);
+          ally.morale = 100;
+          this.world.coins = (this.world.coins || 0) + 50;
+
+          // Destroy flagship & follower lifeboats safely as crew boards ship
+          if (this.world.lifeboats) {
+            this.world.lifeboats.forEach(b => {
+              if (b && b.team === 'blue') b.isDestroyed = true;
+            });
+          }
+
+          if (window.Renderer) {
+            Renderer.addFloatingText(ally.x, ally.y - 50, '⚓ CAPTAIN RE-BOARDED ALLY WARSHIP (+100 HP, MORALE 100%)!', '#39ff14');
+            Renderer.addParticleBurst(ally.x, ally.y, '#ffd700', 30);
+          }
+          break;
+        }
+      }
     }
 
     // 6. Wave Survival Spawner & Healing Logic (STRICTLY ISOLATED TO SURVIVAL MODE ONLY)
@@ -862,8 +898,11 @@ class GameEngine {
       }
     }
 
-    // 7. Update Camera Focus
-    const activeTarget = (this.isPilotingPlane && this.playerPlane) ? this.playerPlane : this.playerShip;
+    // 7. Update Camera Focus (Lifeboat -> Fighter Jet -> Player Warship)
+    const activeTarget = (this.isPilotingLifeboat && this.playerLifeboat && !this.playerLifeboat.isDestroyed)
+      ? this.playerLifeboat
+      : ((this.isPilotingPlane && this.playerPlane && !this.playerPlane.isDestroyed) ? this.playerPlane : this.playerShip);
+
     if (activeTarget && !activeTarget.isDestroyed) {
       this.camera.follow(activeTarget.x, activeTarget.y);
     }
@@ -977,13 +1016,14 @@ class GameEngine {
     // Victory requirement: ALL enemy ships AND ALL enemy planes must be eliminated!
     const blueShips = this.world.ships.filter(s => s && s.team === 'blue' && !s.isDestroyed && !s.isSinking && s.hp > 0).length;
     const bluePlanes = (this.world.aircraft || []).filter(a => a && a.team === 'blue' && !a.isDestroyed && a.hp > 0).length;
-    const blueAlive = blueShips + bluePlanes;
+    const blueLifeboatAlive = (this.isPilotingLifeboat && this.playerLifeboat && !this.playerLifeboat.isDestroyed) ? 1 : 0;
+    const blueAlive = blueShips + bluePlanes + blueLifeboatAlive;
 
     const redShips = this.world.ships.filter(s => s && s.team === 'red' && !s.isDestroyed && !s.isSinking && s.hp > 0).length;
     const redPlanes = (this.world.aircraft || []).filter(a => a && a.team === 'red' && !a.isDestroyed && a.hp > 0).length;
     const redAlive = redShips + redPlanes;
 
-    if (this.playerShip.isDestroyed || (this.playerShip.hp <= 0 && !this.playerShip.isSinking) || blueAlive === 0) {
+    if (blueAlive === 0 || (this.playerShip && (this.playerShip.isDestroyed || (this.playerShip.hp <= 0 && !this.playerShip.isSinking)) && !this.isPilotingLifeboat)) {
       this.isEndingMatch = true;
       this.state = 'ENDGAME';
       EndGameUI.show(false, this.playerShip);
