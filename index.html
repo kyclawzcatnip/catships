@@ -431,6 +431,41 @@
     </div>
   </div>
 
+  <!-- HARBOR BASIN RESUPPLY & DRY DOCK MODAL -->
+  <div id="harbor-resupply-modal" class="modal-backdrop hidden">
+    <div class="modal-card story-modal-card" style="text-align: center; max-width: 540px; border: 2px solid #00f5d4; box-shadow: 0 0 30px rgba(0, 245, 212, 0.3);">
+      <div class="modal-header" style="border-bottom: 1px solid rgba(0, 245, 212, 0.2); padding-bottom: 0.75rem;">
+        <h2 style="color: #00f5d4; margin: 0; font-size: 1.4rem;">⚓ HARBOR BASIN RESUPPLY & DRY DOCK</h2>
+        <button id="btn-close-resupply" class="btn-close" onclick="document.getElementById('harbor-resupply-modal').classList.add('hidden');">&times;</button>
+      </div>
+      <p style="color: #00f5d4; font-weight: 700; margin: 1rem 0 0.5rem 0; font-size: 1.15rem;">
+        ✅ Ship Hull Fully Restored & Armaments Reloaded!
+      </p>
+      <div style="background: rgba(0, 245, 212, 0.08); border: 1px solid rgba(0, 245, 212, 0.3); border-radius: 10px; padding: 1rem; margin: 1rem 0; text-align: left;">
+        <p style="margin: 0.35rem 0; color: #ffffff; font-size: 0.95rem;">❤️ <strong>Hull Integrity:</strong> <span style="color: #00f5d4; font-weight: 700;">100% HP Repaired</span></p>
+        <p style="margin: 0.35rem 0; color: #ffffff; font-size: 0.95rem;">⚡ <strong>Special Ability:</strong> <span style="color: #00f5d4; font-weight: 700;">Cooldown Reset & Ready</span></p>
+        <p style="margin: 0.35rem 0; color: #ffffff; font-size: 0.95rem;">🚀 <strong>Torpedoes & Flak Ammo:</strong> <span style="color: #00f5d4; font-weight: 700;">100% Stocked</span></p>
+        <p style="margin: 0.35rem 0; color: #ffffff; font-size: 0.95rem;">⭐ <strong>Cat Officer Morale:</strong> <span style="color: #ffd700; font-weight: 700;">High Spirits (+100% Morale)</span></p>
+      </div>
+      <div class="modal-buttons" style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.25rem;">
+        <button class="btn btn-primary btn-large" onclick="document.getElementById('harbor-resupply-modal').classList.add('hidden');">
+          ⛵ RETURN TO HARBOR NAVIGATION
+        </button>
+        <div style="display: flex; gap: 0.75rem;">
+          <button class="btn btn-secondary" style="flex: 1;" onclick="document.getElementById('harbor-resupply-modal').classList.add('hidden'); (window.CatnipMain || getGameEngine()).handleDockInteraction({label: 'Catnip Shipyard'});">
+            🏗️ CATNIP SHIPYARD
+          </button>
+          <button class="btn btn-secondary" style="flex: 1; border-color: #ffd700; color: #ffd700;" onclick="document.getElementById('harbor-resupply-modal').classList.add('hidden'); (window.CatnipMain || getGameEngine()).handleDockInteraction({label: 'Salty Meow'});">
+            🐱 OFFICER QUARTERS
+          </button>
+        </div>
+        <button class="btn btn-secondary" style="border-color: #00e5ff; color: #00e5ff;" onclick="document.getElementById('harbor-resupply-modal').classList.add('hidden'); (window.CatnipMain || getGameEngine()).launchBattle((window.CatnipMain || getGameEngine()).selectedShipId, (window.CatnipMain || getGameEngine()).battleSettings);">
+          🌊 DEPLOY TO OPEN SEA COMBAT
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- STORY MODE CHAPTER SELECT MODAL -->
   <div id="story-modal" class="modal-backdrop hidden">
     <div class="modal-card story-modal-card">

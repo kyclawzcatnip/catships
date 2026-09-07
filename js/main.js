@@ -185,7 +185,34 @@ class GameEngine {
     if (window.HangarUI) HangarUI.startPreviewAnimation();
   }
 
-  enterHarborHub() {
+  closeHangarToHarbor() {
+    const hangarScreen = document.getElementById('hangar-screen');
+    const battleScreen = document.getElementById('battle-screen');
+    if (hangarScreen) {
+      hangarScreen.style.display = 'none';
+      hangarScreen.classList.remove('active');
+    }
+    if (battleScreen) {
+      battleScreen.style.display = 'flex';
+      battleScreen.classList.add('active');
+    }
+    if (this.playerShip) {
+      try {
+        const savedPaintId = localStorage.getItem(`catnip_paint_${this.selectedShipId}`);
+        if (savedPaintId && window.SHIPYARD_PAINTS) {
+          const paintObj = window.SHIPYARD_PAINTS.find(p => p.id === savedPaintId);
+          if (paintObj) this.playerShip.paintObj = paintObj;
+        }
+      } catch (e) {}
+    }
+  }
+
+  enterHarborHub(forceReset = false) {
+    if (this.state === 'HARBOR_HUB' && this.playerShip && !forceReset) {
+      this.closeHangarToHarbor();
+      return;
+    }
+
     this.state = 'HARBOR_HUB';
     this.isPilotingPlane = false;
     this.playerPlane = null;
@@ -224,7 +251,7 @@ class GameEngine {
 
     // Create Player Ship at central Harbor Basin slip
     const pData = SHIPS_DATA.find(s => Number(s.id) === Number(this.selectedShipId)) || SHIPS_DATA[0];
-    this.playerShip = new Ship(pData, 'blue', 1500, 1400);
+    this.playerShip = new Ship(pData, 'blue', 1500, 1600);
     this.playerShip.isPlayer = true;
     this.playerShip.hp = this.playerShip.maxHp;
 
@@ -270,12 +297,50 @@ class GameEngine {
   handleDockInteraction(dock) {
     if (!dock) return;
     const label = dock.label || '';
+    const hangarScreen = document.getElementById('hangar-screen');
+
     if (label.includes('Shipyard')) {
-      document.getElementById('hangar-screen').classList.add('active');
-      HangarUI.renderShipyardCustomizer(this.playerShip);
+      if (hangarScreen) {
+        hangarScreen.style.display = 'flex';
+        hangarScreen.classList.add('active');
+      }
+      if (window.HangarUI) {
+        HangarUI.startPreviewAnimation();
+        HangarUI.renderShipyardCustomizer(this.playerShip);
+      }
+      setTimeout(() => {
+        const card = document.querySelector('.shipyard-card');
+        if (card) {
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          card.style.outline = '3px solid #00e5ff';
+          card.style.boxShadow = '0 0 35px #00e5ff';
+          setTimeout(() => { card.style.outline = ''; card.style.boxShadow = ''; }, 3000);
+        }
+      }, 50);
+      if (window.Renderer && this.playerShip) {
+        Renderer.addFloatingText(this.playerShip.x, this.playerShip.y - 45, '🏗️ ENTERING CATNIP SHIPYARD...', '#00e5ff');
+      }
     } else if (label.includes('Salty Meow') || label.includes('Officer')) {
-      document.getElementById('hangar-screen').classList.add('active');
-      HangarUI.renderCrewStations(this.playerShip);
+      if (hangarScreen) {
+        hangarScreen.style.display = 'flex';
+        hangarScreen.classList.add('active');
+      }
+      if (window.HangarUI) {
+        HangarUI.startPreviewAnimation();
+        HangarUI.renderCrewStations(this.playerShip);
+      }
+      setTimeout(() => {
+        const card = document.querySelector('.crew-card');
+        if (card) {
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          card.style.outline = '3px solid #ffd700';
+          card.style.boxShadow = '0 0 35px #ffd700';
+          setTimeout(() => { card.style.outline = ''; card.style.boxShadow = ''; }, 3000);
+        }
+      }, 50);
+      if (window.Renderer && this.playerShip) {
+        Renderer.addFloatingText(this.playerShip.x, this.playerShip.y - 45, '🐱 ENTERING "THE SALTY MEOW" OFFICER QUARTERS...', '#ffd700');
+      }
     } else if (label.includes('Harbor') || label.includes('Resupply')) {
       if (this.playerShip) {
         this.playerShip.hp = this.playerShip.maxHp;
@@ -284,6 +349,10 @@ class GameEngine {
           Renderer.addFloatingText(this.playerShip.x, this.playerShip.y - 45, '⚓ HARBOR BASIN RESUPPLY COMPLETE! (+100% HP & AMMO)', '#00f5d4');
           Renderer.addParticleBurst(this.playerShip.x, this.playerShip.y, '#00f5d4', 30);
         }
+      }
+      const resupplyModal = document.getElementById('harbor-resupply-modal');
+      if (resupplyModal) {
+        resupplyModal.classList.remove('hidden');
       }
     }
   }
@@ -804,7 +873,7 @@ class GameEngine {
       if (this.world.docks && this.playerShip) {
         this.world.docks.forEach(dock => {
           const dist = Math.hypot(this.playerShip.x - dock.x, this.playerShip.y - dock.y);
-          if (dist < dock.dockRadius + 50) {
+          if (dist < dock.dockRadius + 60) {
             nearDock = dock;
           }
         });
@@ -820,10 +889,23 @@ class GameEngine {
       if (nearDock) {
         promptEl.style.display = 'flex';
         promptEl.innerHTML = `<span>${nearDock.icon} ${nearDock.label}</span> — Click or Press <b>[E]</b> to Enter`;
-        promptEl.onclick = () => this.handleDockInteraction(nearDock);
-
-        if (InputHandler.consumeAbilityTrigger() || (InputHandler.isKeyPressed && InputHandler.isKeyPressed('KeyE'))) {
+        promptEl.onclick = (e) => {
+          if (e) e.stopPropagation();
           this.handleDockInteraction(nearDock);
+        };
+
+        if (InputHandler.consumeAbilityTrigger()) {
+          this.handleDockInteraction(nearDock);
+        }
+
+        // Canvas direct click on harbor dock slip
+        if (InputHandler.mouse.isDown && InputHandler.mouse.hasMoved) {
+          InputHandler.updateWorldMouse(this.camera);
+          const distToMouse = Math.hypot(InputHandler.mouse.worldX - nearDock.x, InputHandler.mouse.worldY - nearDock.y);
+          if (distToMouse < nearDock.dockRadius + 20) {
+            InputHandler.mouse.isDown = false;
+            this.handleDockInteraction(nearDock);
+          }
         }
       } else {
         promptEl.style.display = 'none';
