@@ -17,7 +17,7 @@ class RendererEngine {
   }
 
   addParticleBurst(x, y, color, count = 15) {
-    if (this.particles.length > 120) return;
+    if (this.particles.length > 800) return;
 
     for (let i = 0; i < count; i++) {
       const angle = Math.random() * Math.PI * 2;
@@ -33,8 +33,44 @@ class RendererEngine {
     }
   }
 
+  addWaterBubbles(x, y, count = 4) {
+    if (this.particles.length > 800) return;
+    const colors = ['#00e5ff', '#4cc9f0', '#72efdd', '#ffffff'];
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 10 + Math.random() * 35;
+      this.particles.push(new Particle({
+        x: x + (Math.random() - 0.5) * 20,
+        y: y + (Math.random() - 0.5) * 20,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 15,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        radius: 2.5 + Math.random() * 3.5,
+        life: 1.0 + Math.random() * 1.2
+      }));
+    }
+  }
+
+  addSmokePlume(x, y, count = 3) {
+    if (this.particles.length > 800) return;
+    const colors = ['#1a1a1a', '#2d2d2d', '#404040'];
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 8 + Math.random() * 25;
+      this.particles.push(new Particle({
+        x: x + (Math.random() - 0.5) * 25,
+        y: y + (Math.random() - 0.5) * 25,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 20,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        radius: 4 + Math.random() * 6,
+        life: 1.2 + Math.random() * 1.5
+      }));
+    }
+  }
+
   addMuzzleFlash(x, y, angle, color = '#ff9e00') {
-    if (this.particles.length > 100) return;
+    if (this.particles.length > 800) return;
     for (let i = 0; i < 4; i++) {
       const spread = angle + (Math.random() - 0.5) * 0.4;
       const speed = 80 + Math.random() * 120;

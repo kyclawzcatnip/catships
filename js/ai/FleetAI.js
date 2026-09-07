@@ -3,7 +3,7 @@
  */
 class FleetAI {
   static update(aiShip, dt, world) {
-    if (!aiShip || aiShip.isDestroyed || !world || !world.map) return;
+    if (!aiShip || aiShip.isDestroyed || aiShip.isSinking || !world || !world.map) return;
 
     // Is this ship an Ally (blue team) or Enemy (red team)?
     const isAlly = (aiShip.team === 'blue');

@@ -56,12 +56,10 @@ class Ship {
       this.x += this.vx * dt;
       this.y += this.vy * dt;
 
-      // Spawn water bubbles and dark oil smoke
-      if (Math.random() < 0.35 && window.Renderer) {
-        Renderer.addParticleBurst(this.x + (Math.random() - 0.5) * (this.length * 0.7), this.y + (Math.random() - 0.5) * (this.width * 0.7), '#00b4d8', 2);
-      }
-      if (Math.random() < 0.20 && window.Renderer) {
-        Renderer.addParticleBurst(this.x + (Math.random() - 0.5) * (this.length * 0.7), this.y + (Math.random() - 0.5) * (this.width * 0.7), '#2b2b2b', 2);
+      // Spawn water bubbles and dark oil smoke plumes
+      if (window.Renderer) {
+        Renderer.addWaterBubbles(this.x + (Math.random() - 0.5) * (this.length * 0.7), this.y + (Math.random() - 0.5) * (this.width * 0.7), 3);
+        Renderer.addSmokePlume(this.x + (Math.random() - 0.5) * (this.length * 0.7), this.y + (Math.random() - 0.5) * (this.width * 0.7), 2);
       }
 
       if (this.sinkTimer >= this.sinkDuration) {
@@ -399,15 +397,16 @@ class Ship {
     }
 
     // Spawn 2 to 4 Lifeboats with cat survivors! 🚣🐱
-    const targetWorld = world || (window.gameApp ? window.gameApp.world : null);
-    if (targetWorld && targetWorld.lifeboats) {
-      const boatCount = 2 + Math.floor(Math.random() * 3);
+    const targetWorld = world || (window.CatnipMain ? window.CatnipMain.world : (window.Game ? window.Game.world : null));
+    if (targetWorld) {
+      if (!targetWorld.lifeboats) targetWorld.lifeboats = [];
+      const boatCount = 3 + Math.floor(Math.random() * 3);
       for (let i = 0; i < boatCount; i++) {
         const spreadAngle = (i / boatCount) * Math.PI * 2 + Math.random() * 0.5;
-        const speed = 25 + Math.random() * 35;
+        const speed = 40 + Math.random() * 45;
         targetWorld.lifeboats.push(new Lifeboat({
-          x: this.x + (Math.random() - 0.5) * 20,
-          y: this.y + (Math.random() - 0.5) * 20,
+          x: this.x + (Math.random() - 0.5) * 30,
+          y: this.y + (Math.random() - 0.5) * 30,
           vx: Math.cos(spreadAngle) * speed,
           vy: Math.sin(spreadAngle) * speed,
           team: this.team

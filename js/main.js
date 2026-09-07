@@ -774,7 +774,7 @@ class GameEngine {
               break;
             }
 
-            target.takeDamage(p.damage, p.owner);
+            target.takeDamage(p.damage, p.owner, this.world);
             this.camera.addShake(3);
             if (window.Renderer) {
               Renderer.addParticleBurst(p.x, p.y, p.color, 8);
