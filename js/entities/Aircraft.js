@@ -144,6 +144,7 @@ class Aircraft {
           Renderer.addFloatingText(this.x, this.y - 30, '🚀 SIDEWINDER MISSILE!', '#ff3366');
         }
       }
+    } else {
       // --- AI FREE-ROAMING STRIKE SORTIE MODE ---
       // Search for nearest enemy aircraft OR enemy ship (Dogfight Priority!)
       if (!this.targetEntity || this.targetEntity.isDestroyed) {
