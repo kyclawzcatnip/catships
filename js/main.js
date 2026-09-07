@@ -971,17 +971,8 @@ class GameEngine {
                              (saltymeowModal && !saltymeowModal.classList.contains('hidden')) ||
                              (resupplyModal && !resupplyModal.classList.contains('hidden'));
 
-      const ePressed = InputHandler.consumeAbilityTrigger() ||
-                        (InputHandler.isKeyPressed && (InputHandler.isKeyPressed('KeyE') || InputHandler.isKeyPressed('e') || InputHandler.isKeyPressed('E')));
-
-      if (ePressed && InputHandler.keys) {
-        InputHandler.keys['KeyE'] = false;
-        InputHandler.keys['e'] = false;
-        InputHandler.keys['E'] = false;
-      }
-
       if (isAnyModalOpen) {
-        if (ePressed || InputHandler.consumePauseTrigger()) {
+        if (InputHandler.consumeAbilityTrigger() || InputHandler.consumeAATrigger() || InputHandler.consumePauseTrigger()) {
           if (shipyardModal) shipyardModal.classList.add('hidden');
           if (saltymeowModal) saltymeowModal.classList.add('hidden');
           if (resupplyModal) resupplyModal.classList.add('hidden');
@@ -995,13 +986,13 @@ class GameEngine {
         }
 
         promptEl.style.display = 'flex';
-        promptEl.innerHTML = `<span>${nearDock.icon} ${nearDock.label}</span> — Click or Press <b>[E]</b> to Enter`;
+        promptEl.innerHTML = `<span>${nearDock.icon} ${nearDock.label}</span> — Click or Press <b>[E]</b> / <b>[F]</b> to Enter`;
         promptEl.onclick = (e) => {
           if (e) e.stopPropagation();
           this.handleDockInteraction(nearDock);
         };
 
-        if (ePressed) {
+        if (InputHandler.consumeAbilityTrigger() || InputHandler.consumeAATrigger()) {
           this.handleDockInteraction(nearDock);
         }
 
@@ -1009,7 +1000,7 @@ class GameEngine {
         if (InputHandler.mouse.isDown && InputHandler.mouse.hasMoved) {
           InputHandler.updateWorldMouse(this.camera);
           const distToMouse = Math.hypot(InputHandler.mouse.worldX - nearDock.x, InputHandler.mouse.worldY - nearDock.y);
-          if (distToMouse < nearDock.dockRadius + 50) {
+          if (distToMouse < nearDock.dockRadius + 60) {
             InputHandler.mouse.isDown = false;
             this.handleDockInteraction(nearDock);
           }
