@@ -24,8 +24,11 @@
           <p class="subtitle">Naval Fleet Action & Catnip Harbor Hub <span class="version-badge-inline">v3.0.1</span></p>
         </div>
         <div class="main-menu-buttons">
-          <button id="btn-main-play" class="btn btn-primary btn-large" onclick="if(window.MainMenuUI && window.MainMenuUI.onPlay) { window.MainMenuUI.onPlay(); } else if(window.CatnipMain) { window.CatnipMain.enterHarborHub(); }">
-            <span class="icon">🎮</span> PLAY (Enter Harbor Hub)
+          <button id="btn-main-play-hangar" class="btn btn-primary btn-large" onclick="if(window.CatnipMain) window.CatnipMain.openHangarScreen();">
+            <span class="icon">🎮</span> PLAY (Fleet Hangar & HQ)
+          </button>
+          <button id="btn-main-play-harbor" class="btn btn-secondary btn-large" onclick="if(window.CatnipMain) window.CatnipMain.enterHarborHub();">
+            <span class="icon">⛵</span> ENTER PLAYABLE HARBOR HUB MAP
           </button>
           <button id="btn-main-wiki" class="btn btn-secondary btn-large" onclick="if(window.WikiUI) window.WikiUI.show('ships');">
             <span class="icon">📖</span> GO TO WIKI (Field Manual)
@@ -51,6 +54,15 @@
           </div>
         </div>
         <div class="header-actions">
+          <button id="btn-hangar-main-menu" class="btn btn-secondary" onclick="if(window.CatnipMain) window.CatnipMain.returnToMainMenu();">
+            <span class="icon">🏠</span> Main Menu
+          </button>
+          <button id="btn-hangar-harbor-map" class="btn btn-secondary" style="border-color: #00e5ff; color: #00e5ff;" onclick="if(window.CatnipMain) window.CatnipMain.enterHarborHub();">
+            <span class="icon">⛵</span> Playable Harbor Map
+          </button>
+          <button id="btn-hangar-wiki" class="btn btn-secondary" onclick="if(window.WikiUI) window.WikiUI.show('ships');">
+            <span class="icon">📖</span> Wiki
+          </button>
           <button id="btn-sound-toggle" class="btn btn-secondary">
             <span class="icon">🔊</span> Sound: ON
           </button>

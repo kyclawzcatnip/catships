@@ -2,22 +2,26 @@
  * Catnip Warships — Main Menu UI
  */
 class MainMenuUI {
-  static init(onPlay, onOpenWiki, onQuit) {
+  static init() {
     this.screen = document.getElementById('main-menu-screen');
-    this.btnPlay = document.getElementById('btn-main-play');
+    this.btnPlayHangar = document.getElementById('btn-main-play-hangar');
+    this.btnPlayHarbor = document.getElementById('btn-main-play-harbor');
     this.btnWiki = document.getElementById('btn-main-wiki');
     this.btnQuit = document.getElementById('btn-main-quit');
 
-    if (onPlay) this.onPlay = onPlay;
-    if (onOpenWiki) this.onOpenWiki = onOpenWiki;
-    if (onQuit) this.onQuit = onQuit;
-
-    if (this.btnPlay) {
-      this.btnPlay.onclick = (e) => {
+    if (this.btnPlayHangar) {
+      this.btnPlayHangar.onclick = (e) => {
         if (e) e.stopPropagation();
-        if (this.onPlay) {
-          this.onPlay();
-        } else if (window.CatnipMain) {
+        if (window.CatnipMain) {
+          window.CatnipMain.openHangarScreen();
+        }
+      };
+    }
+
+    if (this.btnPlayHarbor) {
+      this.btnPlayHarbor.onclick = (e) => {
+        if (e) e.stopPropagation();
+        if (window.CatnipMain) {
           window.CatnipMain.enterHarborHub();
         }
       };
@@ -26,9 +30,7 @@ class MainMenuUI {
     if (this.btnWiki) {
       this.btnWiki.onclick = (e) => {
         if (e) e.stopPropagation();
-        if (this.onOpenWiki) {
-          this.onOpenWiki();
-        } else if (window.WikiUI) {
+        if (window.WikiUI) {
           window.WikiUI.show('ships');
         }
       };
@@ -37,11 +39,7 @@ class MainMenuUI {
     if (this.btnQuit) {
       this.btnQuit.onclick = (e) => {
         if (e) e.stopPropagation();
-        if (this.onQuit) {
-          this.onQuit();
-        } else {
-          alert('🚪 Thank you for playing Catnip Warships! You can safely close this browser tab now.');
-        }
+        alert('🚪 Thank you for playing Catnip Warships! You can safely close this browser tab now.');
       };
     }
   }

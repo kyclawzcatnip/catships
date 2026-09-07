@@ -154,6 +154,21 @@ class GameEngine {
     if (promptEl) promptEl.style.display = 'none';
   }
 
+  openHangarScreen() {
+    this.state = 'HANGAR';
+    this.isPilotingPlane = false;
+    this.playerPlane = null;
+    this.isEndingMatch = false;
+
+    if (window.MainMenuUI) MainMenuUI.hide();
+    document.getElementById('battle-screen').classList.remove('active');
+    document.getElementById('hangar-screen').classList.add('active');
+    const promptEl = document.getElementById('harbor-hud-prompt');
+    if (promptEl) promptEl.style.display = 'none';
+
+    if (window.HangarUI) HangarUI.startPreviewAnimation();
+  }
+
   enterHarborHub() {
     this.state = 'HARBOR_HUB';
     this.isPilotingPlane = false;
