@@ -188,8 +188,10 @@ class GameEngine {
     this.world.ships = [];
     this.world.projectiles = [];
     this.world.aircraft = [];
+    this.world.lifeboats = [];
     this.world.addProjectile = (p) => this.world.projectiles.push(p);
     this.world.addAircraft = (a) => this.world.aircraft.push(a);
+    this.world.addLifeboat = (l) => this.world.lifeboats.push(l);
     this.world.findNearestEnemy = (fromEntity) => this.findNearestEnemy(fromEntity);
     this.world.fleetCommand = 'ATTACK';
     this.world.playerShip = null;
@@ -798,6 +800,17 @@ class GameEngine {
     }
     this.world.aircraft = this.world.aircraft.filter(a => a && !a.isDestroyed);
 
+    // 5b. Update Lifeboats
+    if (this.world.lifeboats) {
+      for (let i = 0; i < this.world.lifeboats.length; i++) {
+        const boat = this.world.lifeboats[i];
+        if (boat && !boat.isDestroyed) {
+          boat.update(dt);
+        }
+      }
+      this.world.lifeboats = this.world.lifeboats.filter(b => b && !b.isDestroyed);
+    }
+
     // 6. Wave Survival Spawner & Healing Logic (STRICTLY ISOLATED TO SURVIVAL MODE ONLY)
     if (this.gameMode === 'survival' && !this.isStoryMode && this.playerShip && !this.playerShip.isDestroyed) {
       const redAlive = this.world.ships.filter(s => s && s.team !== this.playerShip.team && !s.isDestroyed && s.hp > 0).length;
@@ -852,11 +865,21 @@ class GameEngine {
       this.world.map.draw(this.ctx, this.camera);
     }
 
-    // Reset Context State after map before drawing ships
+    // Reset Context State after map before drawing entities
     this.ctx.globalAlpha = 1.0;
     this.ctx.globalCompositeOperation = 'source-over';
     this.ctx.shadowBlur = 0;
     if (this.ctx.setLineDash) this.ctx.setLineDash([]);
+
+    // 1b. Draw Lifeboats floating on ocean
+    if (this.world.lifeboats) {
+      for (let i = 0; i < this.world.lifeboats.length; i++) {
+        const boat = this.world.lifeboats[i];
+        if (boat && !boat.isDestroyed) {
+          boat.draw(this.ctx, this.camera);
+        }
+      }
+    }
 
     // 2. Draw Ship Entities
     const shipsCount = this.world.ships ? this.world.ships.length : 0;
@@ -897,7 +920,7 @@ class GameEngine {
 
     for (let i = 0; i < this.world.ships.length; i++) {
       const ship = this.world.ships[i];
-      if (ship && ship !== fromEntity && ship.team !== fromEntity.team && !ship.isDestroyed) {
+      if (ship && ship !== fromEntity && ship.team !== fromEntity.team && !ship.isDestroyed && !ship.isSinking) {
         const d = Math.hypot(ship.x - fromEntity.x, ship.y - fromEntity.y);
         if (d < minDist) {
           minDist = d;
@@ -905,6 +928,21 @@ class GameEngine {
         }
       }
     }
+
+    // Fallback: If no enemy ships remain, auto-target active enemy aircraft!
+    if (!nearest && this.world.aircraft) {
+      for (let i = 0; i < this.world.aircraft.length; i++) {
+        const jet = this.world.aircraft[i];
+        if (jet && jet !== fromEntity && jet.team !== fromEntity.team && !jet.isDestroyed) {
+          const d = Math.hypot(jet.x - fromEntity.x, jet.y - fromEntity.y);
+          if (d < minDist) {
+            minDist = d;
+            nearest = jet;
+          }
+        }
+      }
+    }
+
     return nearest;
   }
 
@@ -912,10 +950,16 @@ class GameEngine {
     if (!this.playerShip || this.state !== 'BATTLE' || this.isEndingMatch) return;
     if (this.gameMode === 'survival') return; // Survival mode ends only when player ship is destroyed
 
-    const blueAlive = this.world.ships.filter(s => s && s.team === 'blue' && !s.isDestroyed && s.hp > 0).length;
-    const redAlive = this.world.ships.filter(s => s && s.team === 'red' && !s.isDestroyed && s.hp > 0).length;
+    // Victory requirement: ALL enemy ships AND ALL enemy planes must be eliminated!
+    const blueShips = this.world.ships.filter(s => s && s.team === 'blue' && !s.isDestroyed && !s.isSinking && s.hp > 0).length;
+    const bluePlanes = (this.world.aircraft || []).filter(a => a && a.team === 'blue' && !a.isDestroyed && a.hp > 0).length;
+    const blueAlive = blueShips + bluePlanes;
 
-    if (this.playerShip.isDestroyed || this.playerShip.hp <= 0 || blueAlive === 0) {
+    const redShips = this.world.ships.filter(s => s && s.team === 'red' && !s.isDestroyed && !s.isSinking && s.hp > 0).length;
+    const redPlanes = (this.world.aircraft || []).filter(a => a && a.team === 'red' && !a.isDestroyed && a.hp > 0).length;
+    const redAlive = redShips + redPlanes;
+
+    if (this.playerShip.isDestroyed || (this.playerShip.hp <= 0 && !this.playerShip.isSinking) || blueAlive === 0) {
       this.isEndingMatch = true;
       this.state = 'ENDGAME';
       EndGameUI.show(false, this.playerShip);

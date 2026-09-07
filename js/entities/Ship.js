@@ -38,10 +38,38 @@ class Ship {
     this.isSubmerged = false; // Submarine underwater dive state
     this.captainMood = 'normal'; // 'normal', 'happy', 'hit', 'ability'
     this.moodTimer = 0;
+
+    this.isSinking = false;
+    this.sinkTimer = 0;
+    this.sinkDuration = 4.5;
   }
 
   update(dt, world, inputHandler) {
     if (this.isDestroyed) return;
+
+    // --- Sinking Animation & Ocean Bubbles Routine ---
+    if (this.isSinking) {
+      this.sinkTimer += dt;
+      this.currentSpeed *= 0.92;
+      this.vx *= 0.92;
+      this.vy *= 0.92;
+      this.x += this.vx * dt;
+      this.y += this.vy * dt;
+
+      // Spawn water bubbles and dark oil smoke
+      if (Math.random() < 0.35 && window.Renderer) {
+        Renderer.addParticleBurst(this.x + (Math.random() - 0.5) * (this.length * 0.7), this.y + (Math.random() - 0.5) * (this.width * 0.7), '#00b4d8', 2);
+      }
+      if (Math.random() < 0.20 && window.Renderer) {
+        Renderer.addParticleBurst(this.x + (Math.random() - 0.5) * (this.length * 0.7), this.y + (Math.random() - 0.5) * (this.width * 0.7), '#2b2b2b', 2);
+      }
+
+      if (this.sinkTimer >= this.sinkDuration) {
+        this.isSinking = false;
+        this.isDestroyed = true;
+      }
+      return;
+    }
 
     // 0. Tactical Retreat Trigger (< 25% HP) & Emergency Auto-Repair (120 HP/M base with 2.5x / 3.5x scaling for high HP ships) up to 110% Overcharge!
     const hpRatio = this.hp / this.maxHp;
@@ -307,8 +335,8 @@ class Ship {
     return success;
   }
 
-  takeDamage(amount, attacker) {
-    if (this.isDestroyed) return;
+  takeDamage(amount, attacker, world) {
+    if (this.isDestroyed || this.isSinking) return;
 
     // Submarine Submerged Invulnerability: Surface bullets pass harmlessly overhead!
     if (this.isSubmerged) {
@@ -351,14 +379,39 @@ class Ship {
     this.setCaptainMood('hit', 1.5);
 
     if (this.hp <= 0) {
-      this.hp = 0;
-      this.isDestroyed = true;
+      this.startSinking(world);
+    }
+  }
 
-      if (window.AudioSystem) {
-        AudioSystem.playExplosion();
-      }
-      if (window.Renderer) {
-        Renderer.addParticleBurst(this.x, this.y, '#ff3366', 30);
+  startSinking(world) {
+    if (this.isSinking || this.isDestroyed) return;
+    this.hp = 0;
+    this.isSinking = true;
+    this.sinkTimer = 0;
+    this.sinkDuration = 4.5;
+
+    if (window.AudioSystem) {
+      AudioSystem.playExplosion();
+    }
+    if (window.Renderer) {
+      Renderer.addParticleBurst(this.x, this.y, '#ff3366', 35);
+      Renderer.addFloatingText(this.x, this.y - 45, '💥 WARSHIP SINKING! MAYDAY!', '#ff3366');
+    }
+
+    // Spawn 2 to 4 Lifeboats with cat survivors! 🚣🐱
+    const targetWorld = world || (window.gameApp ? window.gameApp.world : null);
+    if (targetWorld && targetWorld.lifeboats) {
+      const boatCount = 2 + Math.floor(Math.random() * 3);
+      for (let i = 0; i < boatCount; i++) {
+        const spreadAngle = (i / boatCount) * Math.PI * 2 + Math.random() * 0.5;
+        const speed = 25 + Math.random() * 35;
+        targetWorld.lifeboats.push(new Lifeboat({
+          x: this.x + (Math.random() - 0.5) * 20,
+          y: this.y + (Math.random() - 0.5) * 20,
+          vx: Math.cos(spreadAngle) * speed,
+          vy: Math.sin(spreadAngle) * speed,
+          team: this.team
+        }));
       }
     }
   }

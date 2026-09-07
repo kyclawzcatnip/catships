@@ -72,13 +72,22 @@ class RendererEngine {
    * Draw Ship Entity
    */
   drawShip(ctx, ship, camera) {
-    if (!ship || ship.isDestroyed) return;
+    if (!ship || (ship.isDestroyed && !ship.isSinking)) return;
 
     const screenX = ship.x - camera.getRenderOffsetX();
     const screenY = ship.y - camera.getRenderOffsetY();
 
     ctx.save();
     ctx.translate(screenX, screenY);
+
+    // --- SINKING VISUAL ANIMATION (TILT, SCALE DOWN, WATER SUBMERGE FADE) ---
+    if (ship.isSinking) {
+      const sinkProgress = Math.min(1.0, (ship.sinkTimer || 0) / (ship.sinkDuration || 4.5));
+      const scale = Math.max(0.3, 1.0 - sinkProgress * 0.4);
+      ctx.scale(scale, scale);
+      ctx.rotate(Math.sin((ship.sinkTimer || 0) * 3.5) * 0.18 + sinkProgress * 0.3);
+      ctx.globalAlpha = Math.max(0, 1.0 - sinkProgress * 0.95);
+    }
 
     // 1. Water Wake Foam behind moving ship
     if (Math.abs(ship.currentSpeed) > 10) {
