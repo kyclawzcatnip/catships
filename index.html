@@ -464,9 +464,82 @@
         </button>
       </div>
     </div>
+  <!-- CATNIP SHIPYARD & HULL WORKSHOP DOCK MODAL -->
+  <div id="shipyard-dock-modal" class="modal-backdrop hidden">
+    <div class="modal-card story-modal-card" style="text-align: center; max-width: 580px; border: 2px solid #00e5ff; box-shadow: 0 0 35px rgba(0, 229, 255, 0.35);">
+      <div class="modal-header" style="border-bottom: 1px solid rgba(0, 229, 255, 0.2); padding-bottom: 0.75rem;">
+        <h2 style="color: #00e5ff; margin: 0; font-size: 1.4rem;">🏗️ CATNIP SHIPYARD & HULL WORKSHOP</h2>
+        <button class="btn-close" onclick="document.getElementById('shipyard-dock-modal').classList.add('hidden');">&times;</button>
+      </div>
+      <p style="color: #a0aec0; font-size: 0.9rem; margin: 0.75rem 0;">
+        Welcome to the Harbor Shipyard! Customize hull camo paint schemes and turret weapon hardware.
+      </p>
+
+      <div style="background: rgba(10, 25, 45, 0.9); border: 1px solid rgba(0, 229, 255, 0.3); border-radius: 10px; padding: 1rem; margin: 1rem 0; text-align: left;">
+        <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+          <div>
+            <label for="modal-select-ship-paint" style="color: #00e5ff; font-weight: 700; display: block; margin-bottom: 0.35rem; font-size: 0.9rem;">🎨 Ship Hull Camo / Paint:</label>
+            <select id="modal-select-ship-paint" style="width: 100%; padding: 0.6rem; background: #070d18; color: #fff; border: 1px solid #00e5ff; border-radius: 6px; font-family: var(--font-body); font-size: 0.9rem;">
+              <!-- Dynamically populated by main.js -->
+            </select>
+          </div>
+          <div>
+            <label for="modal-select-turret-module" style="color: #00e5ff; font-weight: 700; display: block; margin-bottom: 0.35rem; font-size: 0.9rem;">💣 Turret Module Hardware:</label>
+            <select id="modal-select-turret-module" style="width: 100%; padding: 0.6rem; background: #070d18; color: #fff; border: 1px solid #00e5ff; border-radius: 6px; font-family: var(--font-body); font-size: 0.9rem;">
+              <!-- Dynamically populated by main.js -->
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-buttons" style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem;">
+        <button class="btn btn-primary btn-large" onclick="document.getElementById('shipyard-dock-modal').classList.add('hidden');">
+          ⛵ RETURN TO HARBOR NAVIGATION
+        </button>
+        <div style="display: flex; gap: 0.75rem;">
+          <button class="btn btn-secondary" style="flex: 1;" onclick="document.getElementById('shipyard-dock-modal').classList.add('hidden'); (window.CatnipMain || getGameEngine()).openHangarScreen();">
+            🖥️ FULL FLEET HANGAR HQ
+          </button>
+          <button class="btn btn-secondary" style="flex: 1; border-color: #ffd700; color: #ffd700;" onclick="document.getElementById('shipyard-dock-modal').classList.add('hidden'); (window.CatnipMain || getGameEngine()).handleDockInteraction({label: 'Salty Meow'});">
+            🐱 OFFICER QUARTERS
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- STORY MODE CHAPTER SELECT MODAL -->
+  <!-- "THE SALTY MEOW" OFFICER QUARTERS DOCK MODAL -->
+  <div id="saltymeow-dock-modal" class="modal-backdrop hidden">
+    <div class="modal-card story-modal-card" style="text-align: center; max-width: 580px; border: 2px solid #ffd700; box-shadow: 0 0 35px rgba(255, 215, 0, 0.35);">
+      <div class="modal-header" style="border-bottom: 1px solid rgba(255, 215, 0, 0.2); padding-bottom: 0.75rem;">
+        <h2 style="color: #ffd700; margin: 0; font-size: 1.4rem;">🐱 "THE SALTY MEOW" OFFICER QUARTERS</h2>
+        <button class="btn-close" onclick="document.getElementById('saltymeow-dock-modal').classList.add('hidden');">&times;</button>
+      </div>
+      <p style="color: #a0aec0; font-size: 0.9rem; margin: 0.75rem 0;">
+        Recruit elite Cat Officers at the coastal tavern and assign them to your active ship crew stations!
+      </p>
+
+      <div style="background: rgba(30, 22, 10, 0.9); border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 10px; padding: 1rem; margin: 1rem 0; text-align: left;">
+        <div id="modal-crew-slots-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <!-- Dynamically populated by main.js -->
+        </div>
+      </div>
+
+      <div class="modal-buttons" style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem;">
+        <button class="btn btn-primary btn-large" onclick="document.getElementById('saltymeow-dock-modal').classList.add('hidden');">
+          ⛵ RETURN TO HARBOR NAVIGATION
+        </button>
+        <div style="display: flex; gap: 0.75rem;">
+          <button class="btn btn-secondary" style="flex: 1;" onclick="document.getElementById('saltymeow-dock-modal').classList.add('hidden'); (window.CatnipMain || getGameEngine()).openHangarScreen();">
+            🖥️ FULL FLEET HANGAR HQ
+          </button>
+          <button class="btn btn-secondary" style="flex: 1; border-color: #00e5ff; color: #00e5ff;" onclick="document.getElementById('saltymeow-dock-modal').classList.add('hidden'); (window.CatnipMain || getGameEngine()).handleDockInteraction({label: 'Catnip Shipyard'});">
+            🏗️ CATNIP SHIPYARD
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div id="story-modal" class="modal-backdrop hidden">
     <div class="modal-card story-modal-card">
       <div class="modal-header">

@@ -294,53 +294,138 @@ class GameEngine {
     }
   }
 
+  openShipyardModal() {
+    const modal = document.getElementById('shipyard-dock-modal');
+    if (!modal) return;
+    modal.classList.remove('hidden');
+
+    const paintSelect = document.getElementById('modal-select-ship-paint');
+    const turretSelect = document.getElementById('modal-select-turret-module');
+    const ship = (this.playerShip && this.playerShip.config) ? this.playerShip.config : (SHIPS_DATA.find(s => s.id === this.selectedShipId) || SHIPS_DATA[0]);
+
+    if (paintSelect) {
+      const paints = window.SHIPYARD_PAINTS || [];
+      let savedPaint = 'default';
+      try {
+        savedPaint = localStorage.getItem(`catnip_paint_${ship.id}`) || 'default';
+      } catch (e) {}
+
+      let html = '';
+      paints.forEach(p => {
+        const isSel = (p.id === savedPaint) ? 'selected' : '';
+        html += `<option value="${p.id}" ${isSel}>${p.icon} ${p.name}</option>`;
+      });
+      paintSelect.innerHTML = html;
+
+      paintSelect.onchange = (e) => {
+        const val = e.target.value;
+        try {
+          if (localStorage.getItem) localStorage.setItem(`catnip_paint_${ship.id}`, val);
+        } catch (err) {}
+        if (this.playerShip) {
+          const paintObj = paints.find(p => p.id === val);
+          this.playerShip.paintObj = paintObj;
+        }
+      };
+    }
+
+    if (turretSelect) {
+      const turrets = window.TURRET_MODULES || [];
+      let savedTurret = 'standard';
+      try {
+        savedTurret = localStorage.getItem(`catnip_turret_${ship.id}`) || 'standard';
+      } catch (e) {}
+
+      let html = '';
+      turrets.forEach(t => {
+        const isSel = (t.id === savedTurret) ? 'selected' : '';
+        html += `<option value="${t.id}" ${isSel}>${t.icon} ${t.name} (${t.description})</option>`;
+      });
+      turretSelect.innerHTML = html;
+
+      turretSelect.onchange = (e) => {
+        const val = e.target.value;
+        try {
+          if (localStorage.getItem) localStorage.setItem(`catnip_turret_${ship.id}`, val);
+        } catch (err) {}
+      };
+    }
+  }
+
+  openSaltyMeowModal() {
+    const modal = document.getElementById('saltymeow-dock-modal');
+    if (!modal) return;
+    modal.classList.remove('hidden');
+
+    const container = document.getElementById('modal-crew-slots-container');
+    const ship = (this.playerShip && this.playerShip.config) ? this.playerShip.config : (SHIPS_DATA.find(s => s.id === this.selectedShipId) || SHIPS_DATA[0]);
+    if (!container) return;
+
+    const maxSlots = (this.playerShip && this.playerShip.maxCrewSlots) || 2;
+    let savedCrew = [];
+    try {
+      const raw = localStorage.getItem(`catnip_crew_${ship.id}`);
+      if (raw) savedCrew = JSON.parse(raw);
+    } catch (e) {}
+
+    container.innerHTML = '';
+    const officers = (typeof window !== 'undefined' && window.CREW_OFFICERS && window.CREW_OFFICERS.length > 0)
+      ? window.CREW_OFFICERS
+      : ((typeof CREW_OFFICERS !== 'undefined' && Array.isArray(CREW_OFFICERS)) ? CREW_OFFICERS : []);
+
+    if (!officers || officers.length === 0) {
+      container.innerHTML = '<div style="color: #ffd700; font-size: 0.85rem;">Loading Cat Officers...</div>';
+      return;
+    }
+
+    for (let slotIdx = 0; slotIdx < maxSlots; slotIdx++) {
+      const row = document.createElement('div');
+      row.style.display = 'flex';
+      row.style.alignItems = 'center';
+      row.style.gap = '0.5rem';
+
+      const defaultOfficer = officers[slotIdx % officers.length] || officers[0];
+      const selectedId = (savedCrew && savedCrew[slotIdx]) ? savedCrew[slotIdx] : defaultOfficer.id;
+
+      let optionsHtml = '';
+      officers.forEach(off => {
+        const isSel = (off.id === selectedId) ? 'selected' : '';
+        optionsHtml += `<option value="${off.id}" ${isSel}>${off.icon} ${off.name} (${off.description})</option>`;
+      });
+
+      row.innerHTML = `
+        <span style="font-size: 0.8rem; color: #ffd700; width: 60px; font-weight: 700;">Slot ${slotIdx + 1}:</span>
+        <select style="flex: 1; padding: 0.5rem; background: #0c0803; color: #fff; border: 1px solid #ffd700; border-radius: 6px; font-size: 0.85rem;" data-slot="${slotIdx}">${optionsHtml}</select>
+      `;
+
+      const selectEl = row.querySelector('select');
+      selectEl.addEventListener('change', () => {
+        const currentCrew = Array.from(container.querySelectorAll('select')).map(s => s.value);
+        try {
+          localStorage.setItem(`catnip_crew_${ship.id}`, JSON.stringify(currentCrew));
+        } catch (e) {}
+      });
+
+      container.appendChild(row);
+    }
+  }
+
   handleDockInteraction(dock) {
     if (!dock) return;
     const label = dock.label || '';
-    const hangarScreen = document.getElementById('hangar-screen');
 
     if (label.includes('Shipyard')) {
-      if (hangarScreen) {
-        hangarScreen.style.display = 'flex';
-        hangarScreen.classList.add('active');
-      }
-      if (window.HangarUI) {
-        HangarUI.startPreviewAnimation();
-        HangarUI.renderShipyardCustomizer(this.playerShip);
-      }
-      setTimeout(() => {
-        const card = document.querySelector('.shipyard-card');
-        if (card) {
-          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          card.style.outline = '3px solid #00e5ff';
-          card.style.boxShadow = '0 0 35px #00e5ff';
-          setTimeout(() => { card.style.outline = ''; card.style.boxShadow = ''; }, 3000);
-        }
-      }, 50);
       if (window.Renderer && this.playerShip) {
         Renderer.addFloatingText(this.playerShip.x, this.playerShip.y - 45, '🏗️ ENTERING CATNIP SHIPYARD...', '#00e5ff');
+        Renderer.addParticleBurst(this.playerShip.x, this.playerShip.y, '#00e5ff', 25);
       }
+      this.openShipyardModal();
     } else if (label.includes('Salty Meow') || label.includes('Officer')) {
-      if (hangarScreen) {
-        hangarScreen.style.display = 'flex';
-        hangarScreen.classList.add('active');
-      }
-      if (window.HangarUI) {
-        HangarUI.startPreviewAnimation();
-        HangarUI.renderCrewStations(this.playerShip);
-      }
-      setTimeout(() => {
-        const card = document.querySelector('.crew-card');
-        if (card) {
-          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          card.style.outline = '3px solid #ffd700';
-          card.style.boxShadow = '0 0 35px #ffd700';
-          setTimeout(() => { card.style.outline = ''; card.style.boxShadow = ''; }, 3000);
-        }
-      }, 50);
       if (window.Renderer && this.playerShip) {
         Renderer.addFloatingText(this.playerShip.x, this.playerShip.y - 45, '🐱 ENTERING "THE SALTY MEOW" OFFICER QUARTERS...', '#ffd700');
+        Renderer.addParticleBurst(this.playerShip.x, this.playerShip.y, '#ffd700', 25);
       }
+      this.openSaltyMeowModal();
     } else if (label.includes('Harbor') || label.includes('Resupply')) {
       if (this.playerShip) {
         this.playerShip.hp = this.playerShip.maxHp;
