@@ -2,14 +2,14 @@
 
 > **Action-Packed 100-Ship Naval Combat & Interactive Harbor Basin Simulator**
 
-[![Play Live on GitHub Pages](https://img.shields.io/badge/Play%20Online-GitHub%20Pages-00e5ff?style=for-the-badge&logo=github)](https://kyclawzcatnip.github.io/catnip-warships/)
-[![Version](https://img.shields.io/badge/Version-v3.0.1-39ff14?style=for-the-badge)](https://github.com/kyclawzcatnip/catnip-warships)
-[![Platform](https://img.shields.io/badge/Platform-HTML5%20%7C%20Canvas%202D-ffd700?style=for-the-badge)](https://github.com/kyclawzcatnip/catnip-warships)
-[![Zero Dependencies](https://img.shields.io/badge/Dependencies-Vanilla%20JS%20(Zero)-ff007f?style=for-the-badge)](https://github.com/kyclawzcatnip/catnip-warships)
+[![Play Live on GitHub Pages](https://img.shields.io/badge/Play%20Online-GitHub%20Pages-00e5ff?style=for-the-badge&logo=github)](https://kyclawzcatnip.github.io/catships/)
+[![Version](https://img.shields.io/badge/Version-v3.0.1-39ff14?style=for-the-badge)](https://github.com/kyclawzcatnip/catships)
+[![Platform](https://img.shields.io/badge/Platform-HTML5%20%7C%20Canvas%202D-ffd700?style=for-the-badge)](https://github.com/kyclawzcatnip/catships)
+[![Zero Dependencies](https://img.shields.io/badge/Dependencies-Vanilla%20JS%20(Zero)-ff007f?style=for-the-badge)](https://github.com/kyclawzcatnip/catships)
 
 Playable in any modern web browser — no installation, downloads, or plugins required!
 
-👉 **[PLAY NOW IN BROWSER](https://kyclawzcatnip.github.io/catnip-warships/)**
+👉 **[PLAY NOW IN BROWSER](https://kyclawzcatnip.github.io/catships/)**
 
 ---
 
@@ -77,10 +77,10 @@ To run the game locally on your computer:
 
 ```bash
 # Clone the repository
-git clone https://github.com/kyclawzcatnip/catnip-warships.git
+git clone https://github.com/kyclawzcatnip/catships.git
 
 # Enter the game directory
-cd catnip-warships
+cd catships
 
 # Start a lightweight local HTTP server (Python 3)
 python3 -m http.server 8765
