@@ -63,6 +63,9 @@
           <button id="btn-hangar-wiki" class="btn btn-secondary" onclick="if(window.WikiUI) window.WikiUI.show('ships');">
             <span class="icon">📖</span> Wiki
           </button>
+          <button id="btn-hangar-interior" class="btn btn-secondary" style="border-color: #00e5ff; color: #00e5ff;" onclick="if(window.ShipInterior) window.ShipInterior.open();">
+            <span class="icon">🔍</span> See Ship Interior
+          </button>
           <button id="btn-sound-toggle" class="btn btn-secondary">
             <span class="icon">🔊</span> Sound: ON
           </button>
@@ -98,6 +101,7 @@
               <button class="tab-btn" data-filter="Tank">🛡️ Tank</button>
               <button class="tab-btn" data-filter="Rusher">⚡ Rusher</button>
               <button class="tab-btn" data-filter="Long Ranged">🎯 Long Ranged</button>
+              <button class="tab-btn" style="border-color: #00e5ff; color: #00e5ff; background: rgba(0, 229, 255, 0.12);" onclick="if(window.ShipInterior) window.ShipInterior.open();">🔍 See Ship Interior</button>
             </div>
             <div class="search-box">
               <input type="text" id="ship-search-input" placeholder="Search ship name or ability...">
@@ -116,6 +120,9 @@
               <canvas id="hangar-preview-canvas" width="340" height="200"></canvas>
               <div id="inspector-badge" class="type-badge">Attacker</div>
             </div>
+            <button id="btn-see-ship-interior" class="btn btn-secondary btn-full" style="border-color: #00e5ff; color: #00e5ff; background: rgba(0, 229, 255, 0.12); font-weight: 700; width: 100%; margin: 8px 0; display: flex; align-items: center; justify-content: center; gap: 0.5rem;" onclick="if(window.ShipInterior) window.ShipInterior.open();">
+              <span>🔍</span> SEE SHIP INTERIOR (5 DECKS)
+            </button>
 
             <div class="inspector-details">
               <h2 id="inspector-name">Catnip</h2>
@@ -275,6 +282,9 @@
                 </button>
                 <button id="btn-open-story-mode" class="btn btn-secondary btn-large btn-story-mode">
                   📖 STORY MODE (CAMPAIGN)
+                </button>
+                <button id="btn-action-see-interior" class="btn btn-secondary btn-large" style="border-color: #ffd700; color: #ffd700;" onclick="if(window.ShipInterior) window.ShipInterior.open();">
+                  🔍 SEE SHIP INTERIOR
                 </button>
               </div>
             </div>
@@ -544,6 +554,7 @@
   </div>
 
   <!-- STORY MODE CHAPTER SELECT MODAL -->
+  <div id="story-modal" class="modal-backdrop hidden">
     <div class="modal-card story-modal-card">
       <div class="modal-header">
         <h2>📖 CATNIP WARSHIPS STORY CAMPAIGN</h2>
@@ -561,6 +572,63 @@
         </button>
         <button id="btn-back-to-hangar" class="btn btn-secondary">
           ↩ RETURN TO HANGAR (NORMAL GAME)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHIP INTERIOR BLUEPRINT MODAL -->
+  <div id="ship-interior-modal" class="modal-backdrop hidden">
+    <div class="modal-card interior-modal-card">
+      <div class="modal-header interior-header">
+        <div class="interior-title-group">
+          <h2 id="interior-ship-name">⚓ Ship Blueprints</h2>
+          <span id="interior-ship-badge" class="type-badge">Attacker</span>
+        </div>
+        <button id="btn-close-interior" class="btn-close" onclick="if(window.ShipInterior) window.ShipInterior.close();">&times;</button>
+      </div>
+
+      <div class="interior-deck-nav">
+        <div class="interior-deck-tabs">
+          <button class="interior-deck-tab active" data-deck="1" onclick="if(window.ShipInterior) window.ShipInterior.selectDeck(1);">
+            <span class="deck-num">01</span> BRIDGE & HELM
+          </button>
+          <button class="interior-deck-tab" data-deck="2" onclick="if(window.ShipInterior) window.ShipInterior.selectDeck(2);">
+            <span class="deck-num">02</span> CREW MESS & SICKBAY
+          </button>
+          <button class="interior-deck-tab" data-deck="3" onclick="if(window.ShipInterior) window.ShipInterior.selectDeck(3);">
+            <span class="deck-num">03</span> CITADEL & HOISTS
+          </button>
+          <button class="interior-deck-tab" data-deck="4" onclick="if(window.ShipInterior) window.ShipInterior.selectDeck(4);">
+            <span class="deck-num">04</span> BOILERS & ENGINES
+          </button>
+          <button class="interior-deck-tab" data-deck="5" onclick="if(window.ShipInterior) window.ShipInterior.selectDeck(5);">
+            <span class="deck-num">05</span> TORPEDOES & KEEL
+          </button>
+        </div>
+        <div id="interior-active-deck-title" class="active-deck-banner">Deck 01: Bridge, Navigation Helm & Tactical Radar</div>
+      </div>
+
+      <div class="interior-workspace">
+        <div class="interior-canvas-container">
+          <canvas id="interior-canvas" width="960" height="420"></canvas>
+          <div class="interior-canvas-hint">💡 Hover or click compartments to inspect machinery & stationed Cat Officers</div>
+        </div>
+
+        <aside class="interior-sidebar">
+          <div class="interior-sidebar-title">COMPARTMENT TELEMETRY</div>
+          <div id="interior-room-details" class="interior-room-details">
+            <!-- Dynamically populated by ShipInterior.js -->
+          </div>
+        </aside>
+      </div>
+
+      <div class="interior-footer">
+        <div class="interior-footer-info">
+          <span>📐 High-Resolution Naval Blueprint</span> • <span>Stationed Crew Connected</span>
+        </div>
+        <button class="btn btn-secondary" onclick="if(window.ShipInterior) window.ShipInterior.close();">
+          ✕ CLOSE BLUEPRINTS
         </button>
       </div>
     </div>
@@ -662,40 +730,41 @@
   </div>
 
   <!-- Version Tag (Bottom-Left) -->
-  <div class="version-tag">⚡ v3.0.0 — ⚓ Playable Harbor Basin & Main Menu Edition</div>
+  <div class="version-tag">⚡ v3.1.0 — 🔍 Interactive Ship Interior Blueprints & Fleet Systems</div>
 
   <!-- SCRIPTS MODULE LOAD ORDER -->
-  <script src="js/config.js?v=3.0.0"></script>
-  <script src="js/shipsData.js?v=3.0.0"></script>
-  <script src="js/crewData.js?v=3.0.0"></script>
-  <script src="js/shipyardData.js?v=3.0.0"></script>
-  <script src="js/story/storyData.js?v=3.0.0"></script>
-  <script src="js/abilities.js?v=3.0.0"></script>
+  <script src="js/config.js?v=3.1.0"></script>
+  <script src="js/shipsData.js?v=3.1.0"></script>
+  <script src="js/crewData.js?v=3.1.0"></script>
+  <script src="js/shipyardData.js?v=3.1.0"></script>
+  <script src="js/story/storyData.js?v=3.1.0"></script>
+  <script src="js/abilities.js?v=3.1.0"></script>
   
-  <script src="js/engine/Vector2D.js?v=3.0.0"></script>
-  <script src="js/engine/AudioSystem.js?v=3.0.0"></script>
-  <script src="js/engine/InputHandler.js?v=3.0.0"></script>
-  <script src="js/engine/Camera.js?v=3.0.0"></script>
-  <script src="js/engine/Map.js?v=3.0.0"></script>
-  <script src="js/engine/Physics.js?v=3.0.0"></script>
-  <script src="js/engine/Renderer.js?v=3.0.0"></script>
+  <script src="js/engine/Vector2D.js?v=3.1.0"></script>
+  <script src="js/engine/AudioSystem.js?v=3.1.0"></script>
+  <script src="js/engine/InputHandler.js?v=3.1.0"></script>
+  <script src="js/engine/Camera.js?v=3.1.0"></script>
+  <script src="js/engine/Map.js?v=3.1.0"></script>
+  <script src="js/engine/Physics.js?v=3.1.0"></script>
+  <script src="js/engine/Renderer.js?v=3.1.0"></script>
   
-  <script src="js/entities/Particle.js?v=3.0.0"></script>
-  <script src="js/entities/Projectile.js?v=3.0.0"></script>
-  <script src="js/entities/Aircraft.js?v=3.0.0"></script>
-  <script src="js/entities/Lifeboat.js?v=3.0.0"></script>
-  <script src="js/entities/HarborDock.js?v=3.0.0"></script>
-  <script src="js/entities/Ship.js?v=3.0.0"></script>
+  <script src="js/entities/Particle.js?v=3.1.0"></script>
+  <script src="js/entities/Projectile.js?v=3.1.0"></script>
+  <script src="js/entities/Aircraft.js?v=3.1.0"></script>
+  <script src="js/entities/Lifeboat.js?v=3.1.0"></script>
+  <script src="js/entities/HarborDock.js?v=3.1.0"></script>
+  <script src="js/entities/Ship.js?v=3.1.0"></script>
   
-  <script src="js/ai/FleetAI.js?v=3.0.0"></script>
-  <script src="js/ui/MainMenuUI.js?v=3.0.0"></script>
-  <script src="js/ui/WikiUI.js?v=3.0.0"></script>
-  <script src="js/ui/HangarUI.js?v=3.0.0"></script>
-  <script src="js/ui/HUD.js?v=3.0.0"></script>
-  <script src="js/ui/Minimap.js?v=3.0.0"></script>
-  <script src="js/ui/EndGameUI.js?v=3.0.0"></script>
-  <script src="js/story/StoryMode.js?v=3.0.0"></script>
+  <script src="js/ai/FleetAI.js?v=3.1.0"></script>
+  <script src="js/ui/MainMenuUI.js?v=3.1.0"></script>
+  <script src="js/ui/WikiUI.js?v=3.1.0"></script>
+  <script src="js/ui/HangarUI.js?v=3.1.0"></script>
+  <script src="js/ui/HUD.js?v=3.1.0"></script>
+  <script src="js/ui/Minimap.js?v=3.1.0"></script>
+  <script src="js/ui/EndGameUI.js?v=3.1.0"></script>
+  <script src="js/story/StoryMode.js?v=3.1.0"></script>
+  <script src="js/ui/ShipInterior.js?v=3.1.0"></script>
   
-  <script src="js/main.js?v=3.0.0"></script>
+  <script src="js/main.js?v=3.1.0"></script>
 </body>
 </html>

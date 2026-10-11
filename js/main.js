@@ -1130,12 +1130,18 @@ class GameEngine {
 
       // 🤿 Submarine Dive / Surface Toggle (Key Shift / Key X)
       if (InputHandler.consumeSubmarineDiveTrigger()) {
-        this.playerShip.isSubmerged = !this.playerShip.isSubmerged;
-        if (window.Renderer) {
-          const label = this.playerShip.isSubmerged ? '🤿 SUBMERGED UNDERWATER (BULLET PROOF)!' : '⚓ SURFACED TO WATERLINE!';
-          const color = this.playerShip.isSubmerged ? '#00e5ff' : '#ffd700';
-          Renderer.addFloatingText(this.playerShip.x, this.playerShip.y - 45, label, color);
-          Renderer.addParticleBurst(this.playerShip.x, this.playerShip.y, '#00e5ff', 25);
+        if (!this.playerShip.canSubmerge || !this.playerShip.canSubmerge()) {
+          if (window.Renderer) {
+            Renderer.addFloatingText(this.playerShip.x, this.playerShip.y - 45, '⚠️ ONLY SUBMARINES CAN DIVE! (#101-#103)', '#ff3366');
+          }
+        } else {
+          this.playerShip.isSubmerged = !this.playerShip.isSubmerged;
+          if (window.Renderer) {
+            const label = this.playerShip.isSubmerged ? '🤿 SUBMERGED UNDERWATER (BULLET PROOF)!' : '⚓ SURFACED TO WATERLINE!';
+            const color = this.playerShip.isSubmerged ? '#00e5ff' : '#ffd700';
+            Renderer.addFloatingText(this.playerShip.x, this.playerShip.y - 45, label, color);
+            Renderer.addParticleBurst(this.playerShip.x, this.playerShip.y, '#00e5ff', 25);
+          }
         }
       }
 

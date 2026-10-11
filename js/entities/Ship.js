@@ -58,6 +58,17 @@ class Ship {
     this.rescuedCount = 0;
   }
 
+  canSubmerge() {
+    if (this.isSubmarine) return true;
+    if (this.data) {
+      if (this.data.id >= 101 && this.data.id <= 103) return true;
+      if (this.data.type === 'Submarine') return true;
+      if (this.data.name && this.data.name.toLowerCase().includes('submarine')) return true;
+      if (this.data.flavor && this.data.flavor.toLowerCase().includes('submarine')) return true;
+    }
+    return false;
+  }
+
   applyCrew(officersList) {
     if (!Array.isArray(officersList)) return;
     this.crew = officersList.slice(0, this.maxCrewSlots);

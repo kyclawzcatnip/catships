@@ -261,6 +261,10 @@ class HangarUIClass {
 
     this.renderCrewSlots(ship);
     this.renderShipyardCustomizer(ship);
+
+    if (window.ShipInterior && document.getElementById('ship-interior-modal') && !document.getElementById('ship-interior-modal').classList.contains('hidden')) {
+      window.ShipInterior.open(shipId);
+    }
   }
 
   renderShipyardCustomizer(ship) {

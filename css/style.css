@@ -1529,3 +1529,208 @@ kbd {
   z-index: 90;
 }
 
+/* ==========================================================================
+   SHIP INTERIOR TOP-DOWN MULTI-DECK BLUEPRINT MODAL
+   ========================================================================== */
+.interior-modal-card {
+  max-width: 1060px;
+  width: 96%;
+  max-height: 92vh;
+  background: rgba(8, 14, 26, 0.96);
+  border: 2px solid #00e5ff;
+  border-radius: 16px;
+  box-shadow: 0 0 50px rgba(0, 229, 255, 0.35), 0 20px 60px rgba(0, 0, 0, 0.85);
+  padding: 1.5rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  overflow: hidden;
+  text-align: left;
+}
+
+.interior-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+  padding-bottom: 0.75rem;
+}
+
+.interior-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.interior-title-group h2 {
+  font-size: 1.4rem;
+  color: #00e5ff;
+  font-family: var(--font-heading);
+  margin: 0;
+}
+
+.interior-deck-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.interior-deck-tabs {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.interior-deck-tab {
+  background: rgba(15, 25, 45, 0.85);
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  color: #a0aec0;
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
+  font-family: var(--font-heading);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+
+.interior-deck-tab .deck-num {
+  background: rgba(0, 229, 255, 0.2);
+  color: #00e5ff;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+.interior-deck-tab:hover {
+  border-color: #00e5ff;
+  color: #fff;
+}
+
+.interior-deck-tab.active {
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.25), rgba(0, 245, 212, 0.15));
+  border-color: #00e5ff;
+  color: #00e5ff;
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.35);
+}
+
+.interior-deck-tab.active .deck-num {
+  background: #00e5ff;
+  color: #050f1d;
+  font-weight: 900;
+}
+
+.active-deck-banner {
+  color: #ffd700;
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  border-left: 3px solid #ffd700;
+}
+
+.interior-workspace {
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+  min-height: 420px;
+  overflow: hidden;
+}
+
+.interior-canvas-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #050f1d;
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+#interior-canvas {
+  width: 100%;
+  height: auto;
+  max-height: 440px;
+  display: block;
+}
+
+.interior-canvas-hint {
+  position: absolute;
+  bottom: 8px;
+  left: 14px;
+  font-size: 0.75rem;
+  color: #a0aec0;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 3px 8px;
+  border-radius: 4px;
+  border-left: 2px solid #00e5ff;
+  pointer-events: none;
+}
+
+.interior-sidebar {
+  width: 320px;
+  min-width: 280px;
+  background: rgba(12, 20, 36, 0.85);
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.interior-sidebar-title {
+  font-family: var(--font-heading);
+  font-size: 0.82rem;
+  color: #00e5ff;
+  letter-spacing: 1.5px;
+  border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+  padding-bottom: 0.4rem;
+  margin-bottom: 0.6rem;
+  font-weight: 800;
+}
+
+.interior-room-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.interior-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 0.75rem;
+}
+
+.interior-footer-info {
+  font-size: 0.8rem;
+  color: #718096;
+}
+
+@media (max-width: 900px) {
+  .interior-workspace {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .interior-sidebar {
+    width: 100%;
+    min-height: 220px;
+  }
+}
+
+
